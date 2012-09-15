@@ -65,7 +65,8 @@ typedef enum cmdline_is_option_add_s {
     cmdline_option_add_parser_null,
     cmdline_option_add_wrong_option,
     cmdline_option_add_short_key_already_exists,
-    cmdline_option_add_long_key_already_exists
+    cmdline_option_add_long_key_already_exists,
+    cmdline_option_add_same_option_twice
 } cmdline_is_option_add_e;
 
 cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_t* parser

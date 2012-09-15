@@ -100,6 +100,21 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
         return cmdline_option_add_wrong_option;
     }
 
+    cmdline_option_vector_iterator_t    begin   =   cmdline_option_vector_begin(&parser->options);
+    cmdline_option_vector_iterator_t    end     =   cmdline_option_vector_end(&parser->options);
+    cmdline_is_option_add_e             result  =   cmdline_option_add_success;
+
+    while ((cmdline_option_add_success == result) && (begin != end)) {
+        if (*begin == option) {
+            result  =   cmdline_option_add_same_option_twice;
+        }
+        begin   +=  1;
+    }
+
+    if (cmdline_option_add_success != result) {
+        return result;
+    }
+
     if (cmdline_option_vector_add_result_failure == cmdline_option_vector_push(&parser->options, option)) {
         return cmdline_option_add_no_memory;
     }
