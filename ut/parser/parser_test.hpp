@@ -186,3 +186,37 @@ TEST(ParserTest, you_cannot_add_options_change_same_value_to_parser)
     cmdline_option_parser_destroy(parser);
     cmdline_option_destroy(option_wth_same_output);
 }
+
+TEST(ParserTest, you_can_add_non_conflict_options_to_parser)
+{
+    int                 tester      =   1;
+    int                 tester2     =   1;
+    cmdline_option_t*   not_created =   NULL;
+    cmdline_option_t*   option      =   cmdline_option_create( 'b'
+                                                             , "aa"
+                                                             , "aa desc"
+                                                             , static_cast<void*>(&tester)
+                                                             , dumb_caster
+                                                             , "1"
+                                                             , cmdline_option_not_required );
+    ASSERT_NE(not_created, option);
+    cmdline_option_t*   another_option  =   cmdline_option_create( 'a'
+                                                                 , "not aa"
+                                                                 , "aa desc"
+                                                                 , static_cast<void*>(&tester2)
+                                                                 , dumb_caster
+                                                                 , "1"
+                                                                 , cmdline_option_not_required );
+    ASSERT_NE(not_created, another_option);
+
+    cmdline_option_parser_t*    parser              =   cmdline_option_parser_create();
+    cmdline_option_parser_t*    parser_not_created  =   NULL;
+    ASSERT_NE(parser_not_created, parser);
+
+    EXPECT_EQ( cmdline_option_add_success
+             , cmdline_option_parser_add_option(parser, option) );
+    EXPECT_EQ( cmdline_option_add_success
+             , cmdline_option_parser_add_option(parser, another_option) );
+    EXPECT_EQ(2, cmdline_option_parser_options_count(parser));
+    cmdline_option_parser_destroy(parser);
+}
