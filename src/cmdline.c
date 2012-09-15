@@ -260,9 +260,27 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
     cmdline_is_option_add_e             result  =   cmdline_option_add_success;
 
     while ((cmdline_option_add_success == result) && (begin != end)) {
+
         if (*begin == option) {
             result  =   cmdline_option_add_same_option_twice;
+            continue;
         }
+
+        if ((*begin)->short_key == option->short_key) {
+            result  =   cmdline_option_add_short_key_already_exists;
+            continue;
+        }
+
+        if (0 == strcmp((*begin)->long_key, option->long_key)) {
+            result  =   cmdline_option_add_long_key_already_exists;
+            continue;
+        }
+
+        if ((*begin)->value == option->value) {
+            result  =   cmdline_option_add_same_value_change;
+            continue;
+        }
+
         begin   +=  1;
     }
 
