@@ -41,6 +41,10 @@ static cmdline_option_t* cmdline_option_create_internal( char              short
         return NULL;
     }
 
+    if ((NULL != default_value) && (cmdline_option_required == required)) {
+        return NULL;
+    }
+
     cmdline_option_t*   ret =   malloc(sizeof(cmdline_option_t));
 
     if (NULL == ret) {
