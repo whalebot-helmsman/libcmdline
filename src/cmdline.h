@@ -61,6 +61,7 @@ void cmdline_option_parser_destroy(cmdline_option_parser_t* parser);
 
 typedef enum cmdline_is_option_add_s {
     cmdline_option_add_success = 0,
+    cmdline_option_add_no_memory,
     cmdline_option_add_parser_null,
     cmdline_option_add_wrong_option,
     cmdline_option_add_short_key_already_exists,
@@ -70,6 +71,7 @@ typedef enum cmdline_is_option_add_s {
 cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_t* parser
                                                         , cmdline_option_t*        option );
 void cmdline_option_parser_add_report(cmdline_option_t* option, cmdline_is_option_add_e status);
+int cmdline_option_parser_options_count(cmdline_option_parser_t* parser);
 void cmdline_option_parser_print_help(cmdline_option_parser_t* parser);
 
 typedef enum cmdline_option_parser_status_s {

@@ -2,8 +2,8 @@
 #include <src/cmdline.h>
 
 
-cmdline_cast_arg_result_e dumb_caster( const char* /*cast_from*/
-                                     , void*       /*cast_to*/ )
+static cmdline_cast_arg_result_e dumb_caster( const char* /*cast_from*/
+                                            , void*       /*cast_to*/ )
 {
     return cmdline_cast_arg_success;
 }
