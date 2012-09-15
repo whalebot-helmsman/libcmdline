@@ -80,16 +80,24 @@ typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_unknown_option,
     cmdline_option_parser_status_no_arg,
     cmdline_option_parser_staus_no_required_option,
-    cmdline_option_parser_status_wrong_default
+    cmdline_option_parser_status_wrong_default,
+    cmdline_option_parser_status_meet_option_twice
 } cmdline_option_parser_status_e;
+
+typedef struct cmdline_option_represenatation_s {
+    const char* long_key;
+    char        short_key;
+} cmdline_option_representation_t;
 
 typedef struct cmdline_option_parser_report_s {
     cmdline_option_parser_status_e  status;
-    int                             error_place;
-    const char*                     option_with_error;
+    int                             argument_index;
+    cmdline_option_representation_t option_wth_error;
 } cmdline_option_parser_report_t;
 
-cmdline_option_parser_report_t cmdline_option_parser_parse(int argc, char** argv);
+cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parser_t* parser
+                                                          , int argc
+                                                          , char** argv);
 void cmdline_option_parser_report_print(cmdline_option_parser_report_t report);
 
 #ifdef __cplusplus
