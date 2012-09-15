@@ -85,8 +85,7 @@ cmdline_option_t* cmdline_option_create( char              short_key
 cmdline_option_t* cmdline_flag_create( char        short_key
                                      , const char* long_key
                                      , const char* desc
-                                     , int*        flag
-                                     , int         required )
+                                     , int*        flag )
 {
     return cmdline_option_create_internal( short_key
                                          , long_key
@@ -95,7 +94,7 @@ cmdline_option_t* cmdline_flag_create( char        short_key
                                          , NULL
                                          , NULL
                                          , cmdline_do_not_use_pararm
-                                         , required );
+                                         , cmdline_option_not_required );
 }
 
 cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
