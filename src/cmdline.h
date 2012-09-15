@@ -35,8 +35,7 @@ typedef enum cmdline_is_flag_set_s {
 cmdline_option_t* cmdline_flag_create( char        short_key
                                      , const char* long_key
                                      , const char* desc
-                                     , int*        flag
-                                     , int         required );
+                                     , int*        flag );
 
 cmdline_option_t* cmdline_int_option_create( char        short_key
                                            , const char* long_key

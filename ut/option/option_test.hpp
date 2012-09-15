@@ -22,8 +22,7 @@ TEST(OptionsTest, you_cannot_create_option_or_flag_wth_empty_names)
     EXPECT_EQ(not_created, cmdline_flag_create( '\0'
                                               , NULL
                                               , NULL
-                                              , &tester
-                                              , cmdline_option_not_required ));
+                                              , &tester ));
 }
 
 TEST(OptionsTest, you_cannot_create_option_or_flag_wth_null_output)
@@ -39,8 +38,7 @@ TEST(OptionsTest, you_cannot_create_option_or_flag_wth_null_output)
     EXPECT_EQ(not_created, cmdline_flag_create( 'a'
                                               , NULL
                                               , NULL
-                                              , NULL
-                                              , cmdline_option_not_required ));
+                                              , NULL ));
 }
 
 TEST(OptionsTest, you_cannot_create_option_wth_null_caster)
@@ -74,8 +72,7 @@ TEST(OptionsTest, you_can_create_option_or_flag_wth_valid_params)
     create_try  =   cmdline_flag_create( 'a'
                                        , "aa"
                                        , "aa desc"
-                                       , &tester
-                                       , cmdline_option_not_required );
+                                       , &tester );
     EXPECT_NE(not_created, create_try);
     cmdline_option_destroy(create_try);
 }
