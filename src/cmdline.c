@@ -297,3 +297,71 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
 
     return cmdline_option_add_success;
 }
+
+static int cmdline_is_reperesentation_set(cmdline_option_representation_t repr)
+{
+    return repr.short_key != '\0' || repr.long_key != NULL;
+}
+
+static void cmdline_get_representation( cmdline_option_t* option
+                                      , cmdline_option_representation_t* repr )
+{
+    if (NULL == option->long_key) {
+        repr->short_key =   option->short_key;
+        repr->long_key  =   NULL;
+    }
+    else {
+        repr->short_key =   '\0';
+        repr->long_key  =   option->long_key;
+    }
+}
+
+static cmdline_option_representation_t cmdline_option_parser_preparse(cmdline_option_parser_t* parser)
+{
+    cmdline_option_vector_iterator_t    begin   =   cmdline_option_vector_begin(&parser->options);
+    cmdline_option_vector_iterator_t    end     =   cmdline_option_vector_end(&parser->options);
+
+    cmdline_option_representation_t     error_option;
+    error_option.long_key   =   NULL;
+    error_option.short_key  =   '\0';
+
+    while ((!cmdline_is_reperesentation_set(error_option)) && (begin != end)) {
+        cmdline_option_t*           option  =   *begin;
+
+        if (cmdline_do_not_use_pararm == option->is_use_param) {
+            /*reset flags*/
+            *((int*)option->value)  =   cmdline_flag_not_set;
+        }
+        else if (NULL != option->default_value) {
+            /*set default values*/
+            cmdline_cast_arg_result_e   result  =   option->caster( option->default_value
+                                                                  , option->value );
+            if (cmdline_cast_arg_failure == result) {
+                cmdline_get_representation(option, &error_option);
+                continue;
+            }
+        }
+
+        begin   +=  1;
+    }
+    return error_option;
+}
+
+cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parser_t* parser
+                                                          , int argc
+                                                          , char** argv)
+{
+    cmdline_option_parser_report_t  report;
+    report.status                       =   cmdline_option_parser_status_ok;
+    report.argument_index               =   -1;
+    report.option_wth_error.long_key    =   NULL;
+    report.option_wth_error.short_key   =   '\0';
+
+    report.option_wth_error =   cmdline_option_parser_preparse(parser);
+    if (cmdline_is_reperesentation_set(report.option_wth_error)) {
+        report.status   =   cmdline_option_parser_status_wrong_default;
+        return report;
+    }
+
+    return report;
+}

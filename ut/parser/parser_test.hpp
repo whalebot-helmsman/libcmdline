@@ -220,3 +220,21 @@ TEST(ParserTest, you_can_add_non_conflict_options_to_parser)
     EXPECT_EQ(2, cmdline_option_parser_options_count(parser));
     cmdline_option_parser_destroy(parser);
 }
+
+TEST(ParserTest, aaaa_is_a_bad_int_default_value)
+{
+    long int            tester      =   1;
+    cmdline_option_t*   option      =   cmdline_int_option_create( 'b'
+                                                                 , "aa"
+                                                                 , "aa desc"
+                                                                 , &tester
+                                                                 , "aaaaa"
+                                                                 , cmdline_option_not_required );
+
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    cmdline_option_parser_add_option(parser, option);
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, 0, NULL);
+    EXPECT_EQ(cmdline_option_parser_status_wrong_default, report.status);
+    EXPECT_STREQ("aa", report.option_wth_error.long_key);
+    cmdline_option_parser_destroy(parser);
+}
