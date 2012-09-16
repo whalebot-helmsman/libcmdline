@@ -20,5 +20,5 @@ cmdline_option_t* cmdline_string_option_create( char            short_key
                                               , int             required );
 
 #ifdef __cplusplus
-}//extern "C"
+}/*extern "C"*/
 #endif
