@@ -90,5 +90,5 @@ cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parse
 void cmdline_option_parser_report_print(cmdline_option_parser_report_t report);
 
 #ifdef __cplusplus
-}//extern "C"
+}/*extern "C"*/
 #endif
