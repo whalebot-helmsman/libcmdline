@@ -83,7 +83,8 @@ typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_wrong_default,
     cmdline_option_parser_status_meet_option_twice,
     cmdline_option_parser_status_wrong_value,
-    cmdline_option_parser_status_wrong_option_format
+    cmdline_option_parser_status_wrong_option_format,
+    cmdline_option_parser_status_memory_error
 } cmdline_option_parser_status_e;
 
 typedef struct cmdline_option_represenatation_s {
