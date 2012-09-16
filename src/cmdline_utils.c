@@ -1,6 +1,6 @@
+#include "cmdline_utils.h"
 #include <stddef.h>
 #include <stdlib.h>
-#include "cmdline_utils.h"
 
 cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
                                       , void*       cast_to )
