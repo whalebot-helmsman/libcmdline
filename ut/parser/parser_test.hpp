@@ -239,7 +239,7 @@ TEST(ParserTest, aaaa_is_a_bad_int_default_value)
     cmdline_option_parser_destroy(parser);
 }
 
-TEST(ParserTest, required_option_is_requiured)
+TEST(ParserTest, you_cannot_not_pass_required_option)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
@@ -255,7 +255,7 @@ TEST(ParserTest, required_option_is_requiured)
     cmdline_option_parser_destroy(parser);
 }
 
-TEST(ParserTest, required_option_is_requiured_positive)
+TEST(ParserTest, you_can_pass_required_option)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
@@ -274,7 +274,7 @@ TEST(ParserTest, required_option_is_requiured_positive)
     cmdline_option_parser_destroy(parser);
 }
 
-TEST(ParserTest, option_by_long_key)
+TEST(ParserTest, you_can_pass_required_option_by_long_key)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
@@ -293,7 +293,7 @@ TEST(ParserTest, option_by_long_key)
     cmdline_option_parser_destroy(parser);
 }
 
-TEST(ParserTest, flag_is_set)
+TEST(ParserTest, you_can_set_flag)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     int                             tester      =   1;
@@ -307,5 +307,89 @@ TEST(ParserTest, flag_is_set)
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
     EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
     EXPECT_EQ(cmdline_flag_set, tester);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_set_same_flag_twice)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    int                             tester      =   1;
+    cmdline_option_parser_add_option(parser, cmdline_flag_create( 'a'
+                                                                , "aa"
+                                                                , "aa desc"
+                                                                , &tester ));
+    char*   argv[]  =   {"some_command", "--aa", "-a"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_meet_option_twice, report.status);
+    EXPECT_EQ(cmdline_flag_set, tester);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_pass_unknown_option)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    int                             tester      =   1;
+    char*   argv[]  =   {"some_command", "--aa"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_unknown_option, report.status);
+    EXPECT_EQ(cmdline_flag_set, tester);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_pass_option_wo_value)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
+                                                                      , "aa"
+                                                                      , "aa desc"
+                                                                      , &tester
+                                                                      , NULL
+                                                                      , cmdline_option_required ));
+    char*   argv[]  =   {"some_command", "--aa"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_no_arg, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_pass_wrong_value)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
+                                                                      , "aa"
+                                                                      , "aa desc"
+                                                                      , &tester
+                                                                      , NULL
+                                                                      , cmdline_option_required ));
+    char*   argv[]  =   {"some_command", "--aa", "q"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_wrong_value, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_use_long_options_as_short)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
+                                                                      , "aa"
+                                                                      , "aa desc"
+                                                                      , &tester
+                                                                      , NULL
+                                                                      , cmdline_option_required ));
+    char*   argv[]  =   {"some_command", "-ba"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_wrong_option_format, report.status);
     cmdline_option_parser_destroy(parser);
 }
