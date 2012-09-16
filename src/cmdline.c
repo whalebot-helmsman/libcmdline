@@ -493,7 +493,7 @@ cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int len
         return cmdline_arg_type_short_key;
     }
 
-    if ((2 > length) && (param[0] == key_sign) && (param[1] != key_sign)) {
+    if ((2 < length) && (param[0] == key_sign) && (param[1] != key_sign)) {
         return cmdline_arg_type_error;
     }
 
@@ -654,6 +654,13 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
     }
 
     if (cmdline_is_reperesentation_set(&report->option_wth_error)) {
+        return;
+    }
+
+    if (NULL != state->marked_option) {
+        cmdline_get_representation(state->marked_option, &report->option_wth_error);
+        report->argument_index  =   argc - 1;
+        report->status          =   cmdline_option_parser_status_no_arg;
         return;
     }
 
