@@ -481,6 +481,11 @@ cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parse
 
     cmdline_option_parser_parsing_state_t*  state   =   cmdline_option_parser_parsing_state_init(parser);
 
+    if (NULL == state) {
+        report.status   =   cmdline_option_parser_status_memory_error;
+        return report;
+    }
+
     cmdline_option_parser_parse_internal(parser, argc, argv, state, &report);
 
     cmdline_option_parser_parsing_state_destroy(state);
