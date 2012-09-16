@@ -120,7 +120,7 @@ static void cmdline_option_vector_init(cmdline_option_vector_t* options)
 
 typedef enum cmdline_option_vector_add_result_s {
     cmdline_option_vector_add_result_success = 0,
-    cmdline_option_vector_add_result_failure,
+    cmdline_option_vector_add_result_failure
 } cmdline_option_vector_add_result_t;
 
 static cmdline_option_vector_add_result_t cmdline_option_vector_push( cmdline_option_vector_t* options
