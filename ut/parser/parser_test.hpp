@@ -238,3 +238,19 @@ TEST(ParserTest, aaaa_is_a_bad_int_default_value)
     EXPECT_STREQ("aa", report.option_wth_error.long_key);
     cmdline_option_parser_destroy(parser);
 }
+
+TEST(ParserTest, required_option_is_requiured)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
+                                                                      , "aa"
+                                                                      , "aa desc"
+                                                                      , &tester
+                                                                      , NULL
+                                                                      , cmdline_option_required ));
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, 0, NULL);
+    EXPECT_EQ(cmdline_option_parser_staus_no_required_option, report.status);
+    EXPECT_STREQ("aa", report.option_wth_error.long_key);
+    cmdline_option_parser_destroy(parser);
+}
