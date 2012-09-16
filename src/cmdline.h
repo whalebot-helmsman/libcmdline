@@ -79,7 +79,7 @@ typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_ok = 0,
     cmdline_option_parser_status_unknown_option,
     cmdline_option_parser_status_no_arg,
-    cmdline_option_parser_staus_no_required_option,
+    cmdline_option_parser_status_no_required_option,
     cmdline_option_parser_status_wrong_default,
     cmdline_option_parser_status_meet_option_twice,
     cmdline_option_parser_status_wrong_value,

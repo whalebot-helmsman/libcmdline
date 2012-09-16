@@ -108,7 +108,7 @@ cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
     char*       stop_symbol =   NULL;
     long int    memorize    =   strtol(cast_from, &stop_symbol, 10);
 
-    if ('\0' != stop_symbol) {
+    if ('\0' != *stop_symbol) {
         return cmdline_cast_arg_failure;
     }
 
@@ -213,6 +213,29 @@ static cmdline_option_vector_iterator_t cmdline_option_vector_begin(cmdline_opti
 static cmdline_option_vector_iterator_t cmdline_option_vector_end(cmdline_option_vector_t* options)
 {
     return options->buffer + options->size;
+}
+
+typedef int (*condition_checker) (cmdline_option_t* option, void* context);
+
+static cmdline_option_vector_iterator_t cmdline_option_vector_find( cmdline_option_vector_t* options
+                                                                  , condition_checker checker
+                                                                  , void* context )
+{
+    cmdline_option_vector_iterator_t    begin       =   cmdline_option_vector_begin(options);
+    cmdline_option_vector_iterator_t    end         =   cmdline_option_vector_end(options);
+    int                                 is_find     =   0;
+
+    while ((0 == is_find) && (begin != end)) {
+        cmdline_option_t*   option  =   *begin;
+        if (1 == checker(option, context)) {
+             is_find    =   1;
+        }
+        else {
+            begin   +=  1;
+        }
+    }
+
+    return begin;
 }
 
 static void cmdline_option_vector_destroy(cmdline_option_vector_t* options)
@@ -372,6 +395,7 @@ typedef struct cmdline_option_parser_parsing_state_s {
     char*               is_option_with_this_index_required_and_not_marked;
     int                 options_count;
     cmdline_option_t*   marked_option;
+    int                 arg_index;
 } cmdline_option_parser_parsing_state_t;
 
 void cmdline_option_parser_parsing_state_destroy(cmdline_option_parser_parsing_state_t* state)
@@ -402,6 +426,8 @@ cmdline_option_parser_parsing_state_t* cmdline_option_parser_parsing_state_init(
 
     state->options_count    =   options_count;
     state->marked_option    =   NULL;
+    /* as argv[0] is command, not param*/
+    state->arg_index        =   1;
 
     state->is_option_with_this_index_already_marked             =   malloc(sizeof(char) * state->options_count);
     state->is_option_with_this_index_required_and_not_marked    =   malloc(sizeof(char) * state->options_count);
@@ -438,9 +464,157 @@ int cmdline_option_parser_parsing_state_is_all_required_marked(cmdline_option_pa
         if (1 == state->is_option_with_this_index_required_and_not_marked[i]) {
             index_of_unmarked   =   i;
         }
+        i   +=  1;
     }
 
     return index_of_unmarked;
+}
+
+typedef enum cmdline_arg_type_s {
+    cmdline_arg_type_value,
+    cmdline_arg_type_short_key,
+    cmdline_arg_type_long_key,
+    cmdline_arg_type_error
+} cmdline_arg_type_e;
+
+cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int length)
+{
+    char    key_sign    =   '-';
+
+    if (0 == length) {
+        return cmdline_arg_type_error;
+    }
+
+    if ((1 == length) || (param[0] != key_sign)) {
+        return cmdline_arg_type_value;
+    }
+
+    if ((2 == length) && (param[0] == key_sign)) {
+        return cmdline_arg_type_short_key;
+    }
+
+    if ((2 > length) && (param[0] == key_sign) && (param[1] != key_sign)) {
+        return cmdline_arg_type_error;
+    }
+
+    return cmdline_arg_type_long_key;
+}
+
+void cmdline_option_parser_set_value( const char* value
+                                    , cmdline_option_parser_t* parser
+                                    , cmdline_option_parser_parsing_state_t* state
+                                    , cmdline_option_parser_report_t* report )
+{
+    if (NULL == state->marked_option) {
+        /*TODO add to vector of free parameters*/
+        return;
+    }
+
+    cmdline_cast_arg_result_e   res =   state->marked_option->caster( value
+                                                                    , state->marked_option->value );
+    if (cmdline_cast_arg_failure == res) {
+        cmdline_get_representation(state->marked_option, &report->option_wth_error);
+        report->argument_index  =   state->arg_index;
+        report->status          =   cmdline_option_parser_status_wrong_value;
+        return;
+    }
+
+    state->marked_option    =   NULL;
+}
+
+void cmdline_option_parser_set_option( cmdline_option_vector_iterator_t option_pos
+                                     , cmdline_option_parser_t* parser
+                                     , cmdline_option_parser_parsing_state_t* state
+                                     , cmdline_option_parser_report_t* report )
+{
+    if (NULL != state->marked_option) {
+        cmdline_get_representation(state->marked_option, &report->option_wth_error);
+        report->argument_index  =   state->arg_index - 1;
+        report->status          =   cmdline_option_parser_status_no_arg;
+        return;
+    }
+
+    int                 option_index    =   option_pos - cmdline_option_vector_begin(&parser->options);
+    cmdline_option_t*   option          =   *option_pos;
+
+    if (1 == state->is_option_with_this_index_already_marked[option_index]) {
+        cmdline_get_representation(option, &report->option_wth_error);
+        report->argument_index  =   state->arg_index;
+        report->status          =   cmdline_option_parser_status_meet_option_twice;
+        return;
+    }
+
+    state->is_option_with_this_index_already_marked[option_index]           =   1;
+    state->is_option_with_this_index_required_and_not_marked[option_index]  =   0;
+
+    if (option->is_use_param) {
+        state->marked_option    =   option;
+    }
+    else {
+        *(int*)option->value    =   cmdline_flag_set;
+    }
+}
+
+static int cmdline_short_key_locator(cmdline_option_t* option, void* context)
+{
+    char    short_key   =   *(char*)context;
+
+    if (option->short_key == short_key) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+void cmdline_option_parser_set_short_key( char short_key
+                                        , cmdline_option_parser_t* parser
+                                        , cmdline_option_parser_parsing_state_t* state
+                                        , cmdline_option_parser_report_t* report )
+{
+    cmdline_option_vector_iterator_t    option_pos  =   cmdline_option_vector_find( &parser->options
+                                                                                  , cmdline_short_key_locator
+                                                                                  , (void*)&short_key );
+    if (cmdline_option_vector_end(&parser->options) == option_pos) {
+        report->option_wth_error.short_key  =   short_key;
+        report->option_wth_error.long_key   =   NULL;
+        report->argument_index              =   state->arg_index;
+        report->status                      =   cmdline_option_parser_status_unknown_option;
+        return;
+    }
+
+    cmdline_option_parser_set_option(option_pos, parser, state, report);
+}
+
+static int cmdline_long_key_locator(cmdline_option_t* option, void* context)
+{
+    const char* long_key   =   (const char*)context;
+
+    if (0 == strcmp(option->long_key,long_key)) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+void cmdline_option_parser_set_long_key( const char* long_key
+                                       , cmdline_option_parser_t* parser
+                                       , cmdline_option_parser_parsing_state_t* state
+                                       , cmdline_option_parser_report_t* report )
+{
+    cmdline_option_vector_iterator_t    option_pos  =   cmdline_option_vector_find( &parser->options
+                                                                                  , cmdline_long_key_locator
+                                                                                  , (void*)long_key );
+    if (cmdline_option_vector_end(&parser->options) == option_pos) {
+        report->option_wth_error.short_key  =   '\0';
+        report->option_wth_error.long_key   =   long_key;
+        report->argument_index              =   state->arg_index;
+        report->status                      =   cmdline_option_parser_status_unknown_option;
+        return;
+    }
+
+    cmdline_option_parser_set_option(option_pos, parser, state, report);
 }
 
 void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
@@ -449,6 +623,36 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
                                          , cmdline_option_parser_parsing_state_t* state
                                          , cmdline_option_parser_report_t* report )
 {
+    while ((!cmdline_is_reperesentation_set(&report->option_wth_error)) && (state->arg_index < argc)) {
+        const char*         param   =   argv[state->arg_index];
+        int                 length  =   strlen(param);
+        cmdline_arg_type_e  type    =   cmdline_option_parser_classify_arg(param, length);
+
+        if (cmdline_arg_type_error == type) {
+            report->argument_index              =   state->arg_index;
+            report->status                      =   cmdline_option_parser_status_wrong_option_format;
+            report->option_wth_error.long_key   =   param;
+            continue;
+        }
+
+        switch (type) {
+            case cmdline_arg_type_value :
+                cmdline_option_parser_set_value(param, parser, state, report);
+                break;
+            case cmdline_arg_type_short_key :
+                cmdline_option_parser_set_short_key(param[1], parser, state, report);
+                break;
+            case cmdline_arg_type_long_key :
+                cmdline_option_parser_set_long_key(param + 2, parser, state, report);
+                break;
+
+            default:
+                exit(1);
+        }
+
+        state->arg_index    +=  1;
+    }
+
     if (cmdline_is_reperesentation_set(&report->option_wth_error)) {
         return;
     }
@@ -459,7 +663,7 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
         cmdline_get_representation( cmdline_option_vector_at(&parser->options, index_of_reuired_and_unmarked)
                                   , &report->option_wth_error);
         report->argument_index  =   -1;
-        report->status          =   cmdline_option_parser_staus_no_required_option;
+        report->status          =   cmdline_option_parser_status_no_required_option;
     }
 }
 
