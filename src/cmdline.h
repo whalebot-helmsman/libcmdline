@@ -37,20 +37,6 @@ cmdline_option_t* cmdline_flag_create( char        short_key
                                      , const char* desc
                                      , int*        flag );
 
-cmdline_option_t* cmdline_int_option_create( char        short_key
-                                           , const char* long_key
-                                           , const char* desc
-                                           , long int*   value
-                                           , const char* default_value
-                                           , int         required );
-
-cmdline_option_t* cmdline_string_option_create( char            short_key
-                                              , const char*     long_key
-                                              , const char*     desc
-                                              , const char**    value
-                                              , const char*     default_value
-                                              , int             required );
-
 void cmdline_option_destroy(cmdline_option_t* option);
 
 typedef struct cmdline_option_parser_s cmdline_option_parser_t;

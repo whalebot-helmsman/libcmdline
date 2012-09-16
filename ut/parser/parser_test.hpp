@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <src/cmdline.h>
+#include <src/cmdline_utils.h>
 
 TEST(ParserTest, you_can_create_parser_wth_no_options)
 {
