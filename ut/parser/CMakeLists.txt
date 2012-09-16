@@ -1,6 +1,8 @@
 set(TITLE cmdline_parser_test)
 
 set(SOURCES cmdline_parser.cpp)
+set_source_files_properties( ${SOURCES}
+                            PROPERTIES COMPILE_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings" )
 
 add_executable(${TITLE} ${SOURCES})
 target_link_libraries(${TITLE} ${GTEST_BOTH_LIBRARIES} cmdline pthread)
