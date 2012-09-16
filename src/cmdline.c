@@ -217,12 +217,21 @@ static cmdline_option_vector_iterator_t cmdline_option_vector_end(cmdline_option
 
 static void cmdline_option_vector_destroy(cmdline_option_vector_t* options)
 {
+    if (NULL == options) {
+        return;
+    }
+
+    if (NULL == options->buffer) {
+        return;
+    }
+
     cmdline_option_vector_iterator_t    begin   =   cmdline_option_vector_begin(options);
     cmdline_option_vector_iterator_t    end     =   cmdline_option_vector_end(options);
     while (begin != end) {
         free(*begin);
         begin   +=  1;
     }
+
     free(options->buffer);
 }
 
@@ -237,7 +246,12 @@ cmdline_option_parser_t* cmdline_option_parser_create()
     if (NULL == parser) {
         return NULL;
     }
+
     cmdline_option_vector_init(&parser->options);
+    if (NULL == parser->options.buffer) {
+        cmdline_option_parser_destroy(parser);
+        return NULL;
+    }
 
     return parser;
 }
