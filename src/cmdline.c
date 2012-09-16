@@ -1,7 +1,7 @@
+#include "cmdline.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
-#include "cmdline.h"
 
 typedef enum cmdline_is_use_param_s {
     cmdline_do_not_use_pararm = 0,
