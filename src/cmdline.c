@@ -204,8 +204,72 @@ static void cmdline_option_vector_destroy(cmdline_option_vector_t* options)
     free(options->buffer);
 }
 
+typedef struct cmdline_option_parser_free_params_s {
+    const char**    buffer;
+    int             size;
+} cmdline_option_parser_free_params_t;
+
+cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_init()
+{
+    cmdline_option_parser_free_params_t* free_params    =   malloc(sizeof(cmdline_option_parser_free_params_t));
+
+    if (NULL == free_params) {
+        return NULL;
+    }
+
+    free_params->buffer     =   malloc(sizeof(cmdline_option_t*));
+    *free_params->buffer    =   NULL;
+    free_params->size       =   0;
+
+    return free_params;
+}
+
+void cmdline_option_parser_free_params_destroy(cmdline_option_parser_free_params_t* free_params)
+{
+    if (NULL == free_params) {
+        return;
+    }
+
+    if (NULL != free_params->buffer) {
+        free(free_params->buffer);
+    }
+
+    free(free_params);
+}
+
+cmdline_option_vector_add_result_t cmdline_option_parser_free_params_push( cmdline_option_parser_free_params_t* free_params
+                                                                         , const char* param )
+{
+    int place   =   free_params->size;
+
+    free_params->size   +=  1;
+
+    const char**  new_buffer  =   realloc( free_params->buffer
+                                         , sizeof(cmdline_option_t*) * free_params->size );
+
+    if (NULL == new_buffer) {
+        return cmdline_option_vector_add_result_failure;
+    }
+
+    free_params->buffer =   new_buffer;
+
+    free_params->buffer[place]  =   param;
+    return cmdline_option_vector_add_result_success;
+}
+
+cmdline_option_parser_free_params_iterator_t cmdline_free_params_begin(cmdline_option_parser_free_params_t* free_params)
+{
+    return free_params->buffer;
+}
+
+cmdline_option_parser_free_params_iterator_t cmdline_free_params_end(cmdline_option_parser_free_params_t* free_params)
+{
+    return free_params->buffer + free_params->size;
+}
+
 struct cmdline_option_parser_s {
-    cmdline_option_vector_t options;
+    cmdline_option_vector_t                 options;
+    cmdline_option_parser_free_params_t*    free_params;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -222,12 +286,20 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
+    parser->free_params =   cmdline_option_parser_free_params_init();
+
+    if (NULL == parser->free_params) {
+        cmdline_option_parser_destroy(parser);
+        return NULL;
+    }
+
     return parser;
 }
 
 void cmdline_option_parser_destroy(cmdline_option_parser_t* parser)
 {
     cmdline_option_vector_destroy(&parser->options);
+    cmdline_option_parser_free_params_destroy(parser->free_params);
     free(parser);
 }
 
@@ -452,7 +524,13 @@ void cmdline_option_parser_set_value( const char* value
                                     , cmdline_option_parser_report_t* report )
 {
     if (NULL == state->marked_option) {
-        /*TODO add to vector of free parameters*/
+        cmdline_option_vector_add_result_t  res =   cmdline_option_parser_free_params_push(parser->free_params, value);
+        if (cmdline_option_vector_add_result_failure == res) {
+            report->option_wth_error.long_key   =   NULL;
+            report->option_wth_error.short_key  =   '\0';
+            report->argument_index              =   state->arg_index;
+            report->status                      =   cmdline_option_parser_status_memory_error;
+        }
         return;
     }
 
@@ -647,4 +725,14 @@ cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parse
 
     cmdline_option_parser_parsing_state_destroy(state);
     return report;
+}
+
+cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_begin(cmdline_option_parser_t* parser)
+{
+    return cmdline_free_params_begin(parser->free_params);
+}
+
+cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_end(cmdline_option_parser_t* parser)
+{
+    return cmdline_free_params_end(parser->free_params);
 }
