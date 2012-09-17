@@ -61,6 +61,10 @@ void cmdline_option_parser_add_report(cmdline_option_t* option, cmdline_is_optio
 int cmdline_option_parser_options_count(cmdline_option_parser_t* parser);
 void cmdline_option_parser_print_help(cmdline_option_parser_t* parser);
 
+typedef const char** cmdline_option_parser_free_params_iterator_t;
+cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_begin(cmdline_option_parser_t* parser);
+cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_end(cmdline_option_parser_t* parser);
+
 typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_ok = 0,
     cmdline_option_parser_status_unknown_option,

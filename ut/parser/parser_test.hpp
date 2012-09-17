@@ -393,3 +393,17 @@ TEST(ParserTest, you_cannot_use_long_options_as_short)
     EXPECT_EQ(cmdline_option_parser_status_wrong_option_format, report.status);
     cmdline_option_parser_destroy(parser);
 }
+
+TEST(ParserTest, you_cannot_use_free_params)
+{
+    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    char*   argv[]  =   {"some_command", "ba", "ab", "bc"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    cmdline_option_parser_free_params_iterator_t    begin   =   cmdline_option_parser_free_params_begin(parser);
+    cmdline_option_parser_free_params_iterator_t    end     =   cmdline_option_parser_free_params_end(parser);
+    EXPECT_EQ(3, end - begin);
+    cmdline_option_parser_destroy(parser);
+}
