@@ -13,6 +13,7 @@ set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Wall -pedantic -Wextra")
 
 include_directories(${LIBCMDLINE_SRC_ROOT})
 add_subdirectory(src)
+add_subdirectory(example)
 
 find_package(GTest)
 if (GTEST_FOUND)
