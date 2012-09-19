@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef enum cmdline_is_use_param_s {
     cmdline_do_not_use_pararm = 0,
@@ -330,12 +331,14 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
             continue;
         }
 
-        if ((*begin)->short_key == option->short_key) {
+        if (('\0' != option->short_key) && ((*begin)->short_key == option->short_key)) {
             result  =   cmdline_option_add_short_key_already_exists;
             continue;
         }
 
-        if (0 == strcmp((*begin)->long_key, option->long_key)) {
+        if (  (NULL != option->long_key)
+           && (NULL != (*begin)->long_key)
+           && (0 == strcmp((*begin)->long_key, option->long_key)) ) {
             result  =   cmdline_option_add_long_key_already_exists;
             continue;
         }
@@ -735,4 +738,142 @@ cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_b
 cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_end(cmdline_option_parser_t* parser)
 {
     return cmdline_free_params_end(parser->free_params);
+}
+
+const char*     flag_mark       =   "[flag]";
+const char*     required_mark   =   "[required]";
+
+unsigned int cmdline_option_key_size(cmdline_option_t* option)
+{
+    unsigned int    size            =   0;
+
+    /*-K*/
+    if ('\0' != option->short_key) {
+        size    +=  2;
+    }
+
+    /*',' - beetwen them*/
+    if (('\0' != option->short_key) && (NULL != option->long_key)) {
+        size    +=  1;
+    }
+
+    /*--long-key*/
+    if (NULL != option->long_key) {
+        size    +=  2;
+        size    +=  strlen(option->long_key);
+    }
+
+    if (cmdline_do_not_use_pararm == option->is_use_param) {
+        size    +=  strlen(flag_mark);
+    }
+
+    if (cmdline_option_required == option->required) {
+        size    +=  strlen(required_mark);
+    }
+
+    return size;
+}
+
+
+unsigned int cmdline_option_description_size(cmdline_option_t* option)
+{
+    unsigned int    size            =   0;
+
+    if (NULL != option->desc) {
+        size    +=  strlen(option->desc);
+    }
+
+    /*[=default_value]*/
+    if (NULL != option->default_value) {
+        size    +=  3;
+        size    +=  strlen(option->default_value);
+    }
+
+    return size;
+}
+
+void cmdline_option_key_print( cmdline_option_t* option
+                             , unsigned int keys_max_size )
+{
+    if ('\0' != option->short_key) {
+        fprintf(stderr, "-%c", option->short_key);
+    }
+
+    if (('\0' != option->short_key) && (NULL != option->long_key)) {
+        fprintf(stderr, ",");
+    }
+
+    if (NULL != option->long_key) {
+        fprintf(stderr, "--%s", option->long_key);
+    }
+
+    if (cmdline_do_not_use_pararm == option->is_use_param) {
+        fprintf(stderr, "%s", flag_mark);
+    }
+
+    if (cmdline_option_required == option->required) {
+        fprintf(stderr, "%s", required_mark);
+    }
+
+    unsigned int    size    =   cmdline_option_key_size(option);
+    unsigned int    i;
+    for (i = 0; i != keys_max_size - size; ++i) {
+        fprintf(stderr, " ");
+    }
+
+    fprintf(stderr, "    ");
+}
+
+void cmdline_option_description_print( cmdline_option_t* option
+                                     , unsigned int desc_max_size )
+{
+    if (NULL != option->desc) {
+        fprintf(stderr, "%s", option->desc);
+    }
+
+    if (NULL != option->default_value) {
+        fprintf(stderr, "[=%s]", option->default_value);
+    }
+
+    unsigned int    size    =   cmdline_option_description_size(option);
+    unsigned int    i;
+    for (i = 0; i != desc_max_size - size; ++i) {
+        fprintf(stderr, " ");
+    }
+
+    fprintf(stderr, "\n");
+}
+
+void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
+{
+    unsigned int    keys_max_size           =   0;
+    unsigned int    description_max_size    =   0;
+
+    cmdline_option_vector_iterator_t    begin   =   cmdline_option_vector_begin(&parser->options);
+    cmdline_option_vector_iterator_t    end     =   cmdline_option_vector_end(&parser->options);
+
+    cmdline_option_vector_iterator_t    iter    =   begin;
+    while (iter != end) {
+        cmdline_option_t*   option      =   *iter;
+        unsigned int        key_size    =   cmdline_option_key_size(option);
+        unsigned int        descr_size  =   cmdline_option_description_size(option);
+
+        if (key_size > keys_max_size) {
+            keys_max_size   =   key_size;
+        }
+
+        if (descr_size > description_max_size) {
+            description_max_size    =   descr_size;
+        }
+
+        iter    +=  1;
+    }
+
+    iter    =   begin;
+    while (iter != end) {
+        cmdline_option_t*   option      =   *iter;
+        cmdline_option_key_print(option, keys_max_size);
+        cmdline_option_description_print(option, description_max_size);
+        iter    +=  1;
+    }
 }
