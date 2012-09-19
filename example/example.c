@@ -23,7 +23,15 @@ int main(int argc, char** argv)
                                                                          , &str
                                                                          , NULL
                                                                          , cmdline_option_required ));
-    cmdline_option_parser_print_help(parser);
+    int help;
+    cmdline_option_parser_add_option(parser, cmdline_help_option_create('h', &help));
+    cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
+                                                                           , argc
+                                                                           , argv );
+    if ((cmdline_option_parser_status_ok != result.status) || (cmdline_flag_set == help)) {
+        cmdline_option_parser_print_help(parser);
+    }
+    cmdline_option_parser_destroy(parser);
     return 0;
 }
 
