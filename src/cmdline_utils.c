@@ -56,3 +56,11 @@ cmdline_option_t* cmdline_string_option_create( char            short_key
                                 , required );
 }
 
+cmdline_option_t* cmdline_help_option_create( char  short_key
+                                            , int*  value )
+{
+    return cmdline_flag_create( short_key
+                              , "help"
+                              , "show this message"
+                              , value );
+}

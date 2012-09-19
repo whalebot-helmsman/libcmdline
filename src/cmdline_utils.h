@@ -19,6 +19,9 @@ cmdline_option_t* cmdline_string_option_create( char            short_key
                                               , const char*     default_value
                                               , int             required );
 
+cmdline_option_t* cmdline_help_option_create( char  short_key
+                                            , int*  value );
+
 #ifdef __cplusplus
 }/*extern "C"*/
 #endif
