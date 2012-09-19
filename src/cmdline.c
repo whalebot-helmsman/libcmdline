@@ -21,6 +21,34 @@ struct cmdline_option_s {
    int                  required;
 };
 
+int cmdline_option_validate_long_key(const char* long_key)
+{
+    if (NULL == long_key) {
+        return 1;
+    }
+
+    int length  =   strlen(long_key);
+    if (0 == length) {
+        return 0;
+    }
+
+    if ('-' == long_key[0]) {
+        return 0;
+    }
+
+    int idx     =   0;
+    int is_ok   =   1;
+    while ((1 == is_ok) && (idx != length)) {
+        if (' ' == long_key[idx]) {
+            is_ok   =   0;
+        }
+        else {
+            idx +=  1;
+        }
+    }
+
+    return is_ok;
+}
 static cmdline_option_t* cmdline_option_create_internal( char              short_key
                                                        , const char*       long_key
                                                        , const char*       desc
@@ -34,7 +62,7 @@ static cmdline_option_t* cmdline_option_create_internal( char              short
         return NULL;
     }
 
-    if ((NULL != long_key) && (0 == strlen(long_key))) {
+    if (0 == cmdline_option_validate_long_key(long_key)) {
         return NULL;
     }
 
