@@ -30,6 +30,8 @@ int main(int argc, char** argv)
                                                                            , argv );
     if ((cmdline_option_parser_status_ok != result.status) || (cmdline_flag_set == help)) {
         cmdline_option_parser_print_help(parser);
+        cmdline_option_parser_destroy(parser);
+        return 1;
     }
     cmdline_option_parser_destroy(parser);
     return 0;
