@@ -15,10 +15,7 @@ int main(int argc, char** argv)
     cmdline_opt (parser , 'I' , NULL     , "something you can count"          , &i      , "0"  , cast_int_arg    , NOT_REQ);
     cmdline_opt (parser , 's' , "string" , "something looks like human word"  , &str    , NULL , cast_string_arg , REQ);
 
-    if (0 != cmdline_parse(parser, argc, argv)) {
-        return 1;
-    }
-
+    cmdline_parse(parser, argc, argv);
     cmdline_option_parser_destroy(parser);
     return 0;
 }
