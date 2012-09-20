@@ -276,10 +276,7 @@ TEST(ParserTest, you_can_set_flag)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     int                             tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_flag_create( 'b'
-                                                                , "aa"
-                                                                , "aa desc"
-                                                                , &tester ));
+    cmdline_flag(parser, 'b', "aa", "aa desc", &tester);
     char*   argv[]  =   {"some_command", "--aa"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
@@ -293,10 +290,7 @@ TEST(ParserTest, you_cannot_set_same_flag_twice)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     int                             tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_flag_create( 'a'
-                                                                , "aa"
-                                                                , "aa desc"
-                                                                , &tester ));
+    cmdline_flag(parser, 'a', "aa", "aa desc", &tester);
     char*   argv[]  =   {"some_command", "--aa", "-a"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
