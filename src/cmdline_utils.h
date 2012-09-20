@@ -36,6 +36,22 @@ void cmdline_flag( cmdline_option_parser_t* parser
 
 void cmdline_help(cmdline_option_parser_t* parser, char short_key);
 
+void cmdline_int( cmdline_option_parser_t* parser
+                , char              short_key
+                , const char*       long_key
+                , const char*       desc
+                , long int*         value
+                , const char*       default_value
+                , int               required );
+
+void cmdline_str( cmdline_option_parser_t* parser
+                , char              short_key
+                , const char*       long_key
+                , const char*       desc
+                , const char**      value
+                , const char*       default_value
+                , int               required );
+
 cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
                                       , void*       cast_to );
 
