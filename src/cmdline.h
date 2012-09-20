@@ -91,7 +91,9 @@ typedef struct cmdline_option_parser_report_s {
 cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parser_t* parser
                                                           , int argc
                                                           , char** argv);
-void cmdline_option_parser_report_print(cmdline_option_parser_report_t report);
+void cmdline_option_parser_report_print( cmdline_option_parser_report_t report
+                                       , int argc
+                                       , char** argv);
 
 #ifdef __cplusplus
 }/*extern "C"*/

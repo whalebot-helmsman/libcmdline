@@ -906,3 +906,136 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
         iter    +=  1;
     }
 }
+
+const char* cmdline_option_is_option_add_translate(cmdline_is_option_add_e status)
+{
+    switch(status) {
+        case cmdline_option_add_success:
+            return "success";
+        case cmdline_option_add_no_memory:
+            return "memory error";
+        case cmdline_option_add_parser_null:
+            return "malformed parser";
+        case cmdline_option_add_wrong_option:
+            return "malformed option";
+        case cmdline_option_add_short_key_already_exists:
+            return "option with such short key already exists";
+        case cmdline_option_add_long_key_already_exists:
+            return "option with such long key already exists";
+        case cmdline_option_add_same_option_twice:
+            return "use the same option twice";
+        case cmdline_option_add_same_value_change:
+            return "use the same value for two options";
+        default:
+            return "status unknown";
+
+    }
+}
+
+void cmdline_option_to_human(cmdline_option_t* option)
+{
+    if (NULL != option->long_key) {
+        fprintf(stderr, " \"%s\"\n", option->long_key);
+    }
+    else {
+        fprintf(stderr, " \"%c\"\n", option->short_key);
+    }
+}
+
+void cmdline_option_parser_add_report(cmdline_option_t* option, cmdline_is_option_add_e status)
+{
+    const char* translation =   cmdline_option_is_option_add_translate(status);
+    switch(status) {
+
+        case cmdline_option_add_success:
+            fprintf(stderr, "%s ", translation);
+            cmdline_option_to_human(option);
+            break;
+
+        case cmdline_option_add_no_memory:
+            fprintf(stderr, "%s\n", translation);
+            break;
+
+        case cmdline_option_add_parser_null:
+            fprintf(stderr, "%s\n", translation);
+            break;
+
+        case cmdline_option_add_wrong_option:
+            fprintf(stderr, "%s\n", translation);
+            break;
+
+        case cmdline_option_add_short_key_already_exists:
+            fprintf(stderr, "%s \"%c\"\n", translation, option->short_key);
+            break;
+
+        case cmdline_option_add_long_key_already_exists:
+            fprintf(stderr, "%s \"%s\"\n", translation, option->long_key);
+            break;
+
+        case cmdline_option_add_same_option_twice:
+            fprintf(stderr, "%s ", translation);
+            cmdline_option_to_human(option);
+            break;
+
+        case cmdline_option_add_same_value_change:
+            fprintf(stderr, "%s ", translation);
+            cmdline_option_to_human(option);
+            break;
+    }
+}
+
+const char* cmdline_option_parser_status_to_human(cmdline_option_parser_status_e status)
+{
+    switch(status) {
+        case cmdline_option_parser_status_ok:
+            return "success";
+        case cmdline_option_parser_status_unknown_option:
+            return "option unknown";
+        case cmdline_option_parser_status_no_arg:
+            return "no argument for oprion";
+        case cmdline_option_parser_status_no_required_option:
+            return "option required";
+        case cmdline_option_parser_status_wrong_default:
+            return "non-convertible default for option";
+        case cmdline_option_parser_status_meet_option_twice:
+            return "option twice";
+        case cmdline_option_parser_status_wrong_value:
+            return "non-convertible value for option";
+        case cmdline_option_parser_status_wrong_option_format:
+            return "wrong format for option";
+        case cmdline_option_parser_status_memory_error:
+            return "memory error";
+        default:
+            return "unknown status";
+    }
+}
+
+void cmdline_option_repr_to_human(cmdline_option_representation_t repr)
+{
+    if (NULL != repr.long_key) {
+        fprintf(stderr, ": \"%s\"\n", repr.long_key);
+    }
+    else if ('\0' != repr.short_key) {
+        fprintf(stderr, ": \"%c\"\n", repr.short_key);
+    }
+}
+
+void cmdline_option_parser_report_print( cmdline_option_parser_report_t report
+                                       , int argc
+                                       , char** argv)
+{
+    const char* translation =   cmdline_option_parser_status_to_human(report.status);
+    fprintf(stderr, "%s", translation);
+    cmdline_option_repr_to_human(report.option_wth_error);
+    if (-1 != report.argument_index) {
+        int i;
+        for (i = 0; i != argc; ++i) {
+            const char* template    =   " %s";
+            if (i == report.argument_index) {
+                template    =   " __%s__";
+            }
+            fprintf(stderr, template, argv[i]);
+        }
+        fprintf(stderr, "\n");
+    }
+}
