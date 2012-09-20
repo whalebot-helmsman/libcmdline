@@ -131,6 +131,42 @@ void cmdline_help(cmdline_option_parser_t* parser, char short_key)
                 , cmdline_option_parser_help_flag(parser) );
 }
 
+void cmdline_int( cmdline_option_parser_t* parser
+                , char              short_key
+                , const char*       long_key
+                , const char*       desc
+                , long int*         value
+                , const char*       default_value
+                , int               required )
+{
+    cmdline_opt( parser
+               , short_key
+               , long_key
+               , desc
+               , value
+               , default_value
+               , cast_int_arg
+               , required );
+}
+
+void cmdline_str( cmdline_option_parser_t* parser
+                , char              short_key
+                , const char*       long_key
+                , const char*       desc
+                , const char**      value
+                , const char*       default_value
+                , int               required )
+{
+    cmdline_opt( parser
+               , short_key
+               , long_key
+               , desc
+               , value
+               , default_value
+               , cast_string_arg
+               , required );
+}
+
 void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
 {
     cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
