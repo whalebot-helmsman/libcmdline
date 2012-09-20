@@ -11,18 +11,10 @@ int main(int argc, char** argv)
 
     cmdline_option_parser_t* parser =   cmdline_option_parser_create();
 
-    if(1 != cmdline_flag(parser, 'f', "flag", "flag symbolizes something binary", &flag)) {
-        return 1;
-    }
-    if(1 != cmdline_opt(parser, 'I', NULL, "something you can count", &i, "0", cast_int_arg, NOT_REQ)) {
-        return 1;
-    }
-    if(1 != cmdline_opt(parser, 's', "string", "something looks like human word", &str, NULL, cast_string_arg, REQ)) {
-        return 1;
-    }
-    if(1 != cmdline_flag(parser, 'h', "help", "show this message", &help)) {
-        return 1;
-    }
+    cmdline_flag(parser , 'f' , "flag"   , "flag symbolizes something binary" , &flag);
+    cmdline_flag(parser , 'h' , "help"   , "show this message"                , &help);
+    cmdline_opt (parser , 'I' , NULL     , "something you can count"          , &i      , "0"  , cast_int_arg    , NOT_REQ);
+    cmdline_opt (parser , 's' , "string" , "something looks like human word"  , &str    , NULL , cast_string_arg , REQ);
 
     cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
                                                                            , argc
