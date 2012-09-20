@@ -224,15 +224,9 @@ TEST(ParserTest, you_can_add_non_conflict_options_to_parser)
 TEST(ParserTest, aaaa_is_a_bad_int_default_value)
 {
     long int            tester      =   1;
-    cmdline_option_t*   option      =   cmdline_int_option_create( 'b'
-                                                                 , "aa"
-                                                                 , "aa desc"
-                                                                 , &tester
-                                                                 , "aaaaa"
-                                                                 , cmdline_option_not_required );
 
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
-    cmdline_option_parser_add_option(parser, option);
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, "aaaaa", NOT_REQ);
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, 0, NULL);
     EXPECT_EQ(cmdline_option_parser_status_wrong_default, report.status);
     EXPECT_STREQ("aa", report.option_wth_error.long_key);
@@ -243,12 +237,7 @@ TEST(ParserTest, you_cannot_not_pass_required_option)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
-                                                                      , "aa"
-                                                                      , "aa desc"
-                                                                      , &tester
-                                                                      , NULL
-                                                                      , cmdline_option_required ));
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, 0, NULL);
     EXPECT_EQ(cmdline_option_parser_status_no_required_option, report.status);
     EXPECT_STREQ("aa", report.option_wth_error.long_key);
@@ -257,14 +246,9 @@ TEST(ParserTest, you_cannot_not_pass_required_option)
 
 TEST(ParserTest, you_can_pass_required_option)
 {
-    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
     long int                        tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
-                                                                      , "aa"
-                                                                      , "aa desc"
-                                                                      , &tester
-                                                                      , NULL
-                                                                      , cmdline_option_required ));
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
     char*   argv[]  =   {"some_command", "-b", "2"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
@@ -276,14 +260,9 @@ TEST(ParserTest, you_can_pass_required_option)
 
 TEST(ParserTest, you_can_pass_required_option_by_long_key)
 {
-    cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
     long int                        tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
-                                                                      , "aa"
-                                                                      , "aa desc"
-                                                                      , &tester
-                                                                      , NULL
-                                                                      , cmdline_option_required ));
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
     char*   argv[]  =   {"some_command", "--aa", "2"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
@@ -344,12 +323,7 @@ TEST(ParserTest, you_cannot_pass_option_wo_value)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
-                                                                      , "aa"
-                                                                      , "aa desc"
-                                                                      , &tester
-                                                                      , NULL
-                                                                      , cmdline_option_required ));
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
     char*   argv[]  =   {"some_command", "--aa"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
@@ -362,12 +336,7 @@ TEST(ParserTest, you_cannot_pass_wrong_value)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
-                                                                      , "aa"
-                                                                      , "aa desc"
-                                                                      , &tester
-                                                                      , NULL
-                                                                      , cmdline_option_required ));
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
     char*   argv[]  =   {"some_command", "--aa", "q"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
@@ -380,13 +349,8 @@ TEST(ParserTest, you_cannot_use_long_options_as_short)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     long int                        tester      =   1;
-    cmdline_option_parser_add_option(parser, cmdline_int_option_create( 'b'
-                                                                      , "aa"
-                                                                      , "aa desc"
-                                                                      , &tester
-                                                                      , NULL
-                                                                      , cmdline_option_required ));
-    char*   argv[]  =   {"some_command", "-ba"};
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
+    char*   argv[]  =   {"some_command", "-aa"};
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
