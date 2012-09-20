@@ -352,7 +352,7 @@ TEST(ParserTest, you_cannot_use_long_options_as_short)
     cmdline_option_parser_destroy(parser);
 }
 
-TEST(ParserTest, you_cannot_use_free_params)
+TEST(ParserTest, you_can_use_free_params)
 {
     cmdline_option_parser_t*        parser  =   cmdline_option_parser_create();
     char*   argv[]  =   {"some_command", "ba", "ab", "bc"};
