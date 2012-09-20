@@ -100,7 +100,7 @@ TEST(ParserTest, you_cannot_add_options_wth_equal_short_keys_to_parser)
                                                              , cmdline_option_not_required );
     ASSERT_NE(not_created, option);
     cmdline_option_t*   option_wth_same_short   =   cmdline_option_create( 'a'
-                                                                         , "not aa"
+                                                                         , "notaa"
                                                                          , "aa desc"
                                                                          , static_cast<void*>(&tester2)
                                                                          , dumb_caster
@@ -167,7 +167,7 @@ TEST(ParserTest, you_cannot_add_options_change_same_value_to_parser)
                                                              , cmdline_option_not_required );
     ASSERT_NE(not_created, option);
     cmdline_option_t*   option_wth_same_output  =   cmdline_option_create( 'a'
-                                                                         , "not aa"
+                                                                         , "notaa"
                                                                          , "aa desc"
                                                                          , static_cast<void*>(&tester)
                                                                          , dumb_caster
@@ -201,7 +201,7 @@ TEST(ParserTest, you_can_add_non_conflict_options_to_parser)
                                                              , cmdline_option_not_required );
     ASSERT_NE(not_created, option);
     cmdline_option_t*   another_option  =   cmdline_option_create( 'a'
-                                                                 , "not aa"
+                                                                 , "notaa"
                                                                  , "aa desc"
                                                                  , static_cast<void*>(&tester2)
                                                                  , dumb_caster
