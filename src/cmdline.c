@@ -652,7 +652,7 @@ static int cmdline_long_key_locator(cmdline_option_t* option, void* context)
 {
     const char* long_key   =   (const char*)context;
 
-    if (0 == strcmp(option->long_key,long_key)) {
+    if ((NULL != option->long_key) && (0 == strcmp(option->long_key,long_key))) {
         return 1;
     }
     else {
