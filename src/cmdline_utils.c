@@ -65,14 +65,14 @@ cmdline_option_t* cmdline_help_option_create( char  short_key
                               , value );
 }
 
-int cmdline_add_internal( cmdline_option_parser_t* parser
-                        , cmdline_option_t*        option )
+void cmdline_add_internal( cmdline_option_parser_t* parser
+                         , cmdline_option_t*        option )
 {
 
     cmdline_is_option_add_e status = cmdline_option_parser_add_option( parser
                                                                      , option );
     if (cmdline_option_add_success == status) {
-        return 1;
+        return;
     }
 
     cmdline_option_parser_add_report(option, status);
@@ -85,10 +85,10 @@ int cmdline_add_internal( cmdline_option_parser_t* parser
         cmdline_option_parser_destroy(parser);
     }
 
-    return 0;
+    exit(1);
 }
 
-int cmdline_opt( cmdline_option_parser_t* parser
+void cmdline_opt( cmdline_option_parser_t* parser
                 , char              short_key
                 , const char*       long_key
                 , const char*       desc
@@ -108,11 +108,11 @@ int cmdline_opt( cmdline_option_parser_t* parser
 
 }
 
-int cmdline_flag( cmdline_option_parser_t* parser
-                , char        short_key
-                , const char* long_key
-                , const char* desc
-                , int*        value )
+void cmdline_flag( cmdline_option_parser_t* parser
+                 , char        short_key
+                 , const char* long_key
+                 , const char* desc
+                 , int*        value )
 {
 
     cmdline_option_t*   option  =   cmdline_flag_create( short_key
@@ -122,7 +122,7 @@ int cmdline_flag( cmdline_option_parser_t* parser
     return cmdline_add_internal(parser, option);
 }
 
-int cmdline_help(cmdline_option_parser_t* parser, char short_key)
+void cmdline_help(cmdline_option_parser_t* parser, char short_key)
 {
     return cmdline_flag( parser
                        , short_key
@@ -131,7 +131,7 @@ int cmdline_help(cmdline_option_parser_t* parser, char short_key)
                        , cmdline_option_parser_help_flag(parser) );
 }
 
-int cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
+void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
 {
     cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
                                                                            , argc
@@ -140,8 +140,6 @@ int cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
         cmdline_option_parser_report_print(result, argc, argv);
         cmdline_option_parser_print_help(parser);
         cmdline_option_parser_destroy(parser);
-        return 1;
+        exit(1);
     }
-
-    return 0;
 }
