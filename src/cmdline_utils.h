@@ -52,11 +52,6 @@ void cmdline_str( cmdline_option_parser_t* parser
                 , const char*       default_value
                 , int               required );
 
-cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
-                                      , void*       cast_to );
-
-cmdline_cast_arg_result_e cast_string_arg( const char* cast_from
-                                         , void*       cast_to );
 #define NOT_REQ cmdline_option_not_required
 #define REQ cmdline_option_required
 
