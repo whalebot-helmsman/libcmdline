@@ -43,6 +43,7 @@ typedef struct cmdline_option_parser_s cmdline_option_parser_t;
 
 cmdline_option_parser_t* cmdline_option_parser_create();
 void cmdline_option_parser_destroy(cmdline_option_parser_t* parser);
+int* cmdline_option_parser_help_flag(cmdline_option_parser_t* parser);
 
 typedef enum cmdline_is_option_add_s {
     cmdline_option_add_success = 0,
@@ -74,7 +75,8 @@ typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_meet_option_twice,
     cmdline_option_parser_status_wrong_value,
     cmdline_option_parser_status_wrong_option_format,
-    cmdline_option_parser_status_memory_error
+    cmdline_option_parser_status_memory_error,
+    cmdline_option_parser_status_show_help
 } cmdline_option_parser_status_e;
 
 typedef struct cmdline_option_represenatation_s {

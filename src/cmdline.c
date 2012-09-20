@@ -299,6 +299,7 @@ cmdline_option_parser_free_params_iterator_t cmdline_free_params_end(cmdline_opt
 struct cmdline_option_parser_s {
     cmdline_option_vector_t                 options;
     cmdline_option_parser_free_params_t*    free_params;
+    int                                     is_help_asked;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -322,6 +323,8 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
+    parser->is_help_asked   =   cmdline_flag_not_set;
+
     return parser;
 }
 
@@ -332,6 +335,10 @@ void cmdline_option_parser_destroy(cmdline_option_parser_t* parser)
     free(parser);
 }
 
+int* cmdline_option_parser_help_flag(cmdline_option_parser_t* parser)
+{
+    return &parser->is_help_asked;
+}
 int cmdline_option_parser_options_count(cmdline_option_parser_t* parser)
 {
     return parser->options.size;
@@ -755,6 +762,13 @@ cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parse
     cmdline_option_parser_parse_internal(parser, argc, argv, state, &report);
 
     cmdline_option_parser_parsing_state_destroy(state);
+
+    if (cmdline_flag_set == parser->is_help_asked) {
+        report.status                       =   cmdline_option_parser_status_show_help;
+        report.argument_index               =   -1;
+        report.option_wth_error.long_key    =   NULL;
+        report.option_wth_error.short_key   =   '\0';
+    }
     return report;
 }
 
@@ -1005,6 +1019,8 @@ const char* cmdline_option_parser_status_to_human(cmdline_option_parser_status_e
             return "wrong format for option";
         case cmdline_option_parser_status_memory_error:
             return "memory error";
+        case cmdline_option_parser_status_show_help:
+            return "Usage:";
         default:
             return "unknown status";
     }
@@ -1017,6 +1033,9 @@ void cmdline_option_repr_to_human(cmdline_option_representation_t repr)
     }
     else if ('\0' != repr.short_key) {
         fprintf(stderr, ": \"%c\"\n", repr.short_key);
+    }
+    else {
+        fprintf(stderr, "\n");
     }
 }
 

@@ -19,9 +19,6 @@ cmdline_option_t* cmdline_string_option_create( char            short_key
                                               , const char*     default_value
                                               , int             required );
 
-cmdline_option_t* cmdline_help_option_create( char  short_key
-                                            , int*  value );
-
 int cmdline_opt( cmdline_option_parser_t* parser
                 , char              short_key
                 , const char*       long_key
@@ -36,6 +33,8 @@ int cmdline_flag( cmdline_option_parser_t* parser
                 , const char* long_key
                 , const char* desc
                 , int*        value );
+
+int cmdline_help(cmdline_option_parser_t* parser, char short_key);
 
 cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
                                       , void*       cast_to );

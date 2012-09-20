@@ -121,3 +121,12 @@ int cmdline_flag( cmdline_option_parser_t* parser
                                                        , value );
     return cmdline_add_internal(parser, option);
 }
+
+int cmdline_help(cmdline_option_parser_t* parser, char short_key)
+{
+    return cmdline_flag( parser
+                       , short_key
+                       , "help"
+                       , "show this message"
+                       , cmdline_option_parser_help_flag(parser) );
+}
