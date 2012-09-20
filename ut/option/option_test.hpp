@@ -77,7 +77,7 @@ TEST(OptionsTest, you_can_create_option_or_flag_wth_valid_params)
     cmdline_option_destroy(create_try);
 }
 
-TEST(optionstest, you_cannot_create_option_with_spaced_long_key)
+TEST(OptionsTest, you_cannot_create_option_with_spaced_long_key)
 {
     cmdline_option_t*   not_created =   NULL;
     int                 flag;
@@ -90,7 +90,7 @@ TEST(optionstest, you_cannot_create_option_with_spaced_long_key)
                                                 , cmdline_option_not_required ));
 }
 
-TEST(optionstest, you_cannot_create_option_long_key_starting_from_dash)
+TEST(OptionsTest, you_cannot_create_option_long_key_starting_from_dash)
 {
     cmdline_option_t*   not_created =   NULL;
     int                 flag;
