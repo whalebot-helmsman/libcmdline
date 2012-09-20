@@ -768,8 +768,8 @@ cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_e
     return cmdline_free_params_end(parser->free_params);
 }
 
-const char*     flag_mark       =   "[flag]";
-const char*     required_mark   =   "[required]";
+const char*     flag_mark       =   ", [flag]";
+const char*     required_mark   =   ", [required]";
 
 unsigned int cmdline_option_key_size(cmdline_option_t* option)
 {
@@ -780,9 +780,9 @@ unsigned int cmdline_option_key_size(cmdline_option_t* option)
         size    +=  2;
     }
 
-    /*',' - beetwen them*/
+    /*', ' - beetwen them*/
     if (('\0' != option->short_key) && (NULL != option->long_key)) {
-        size    +=  1;
+        size    +=  2;
     }
 
     /*--long-key*/
@@ -811,9 +811,9 @@ unsigned int cmdline_option_description_size(cmdline_option_t* option)
         size    +=  strlen(option->desc);
     }
 
-    /*[=default_value]*/
+    /* [= default_value]*/
     if (NULL != option->default_value) {
-        size    +=  3;
+        size    +=  5;
         size    +=  strlen(option->default_value);
     }
 
@@ -823,12 +823,13 @@ unsigned int cmdline_option_description_size(cmdline_option_t* option)
 void cmdline_option_key_print( cmdline_option_t* option
                              , unsigned int keys_max_size )
 {
+    fprintf(stderr, "\t");
     if ('\0' != option->short_key) {
         fprintf(stderr, "-%c", option->short_key);
     }
 
     if (('\0' != option->short_key) && (NULL != option->long_key)) {
-        fprintf(stderr, ",");
+        fprintf(stderr, ", ");
     }
 
     if (NULL != option->long_key) {
@@ -860,7 +861,7 @@ void cmdline_option_description_print( cmdline_option_t* option
     }
 
     if (NULL != option->default_value) {
-        fprintf(stderr, "[=%s]", option->default_value);
+        fprintf(stderr, " [= %s]", option->default_value);
     }
 
     unsigned int    size    =   cmdline_option_description_size(option);
