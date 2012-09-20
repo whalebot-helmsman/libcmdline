@@ -179,3 +179,8 @@ void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
         exit(1);
     }
 }
+
+cmdline_cast_arg_result_e dumb_caster(const char* cast_from, void* cast_to)
+{
+    return cmdline_cast_arg_success;
+}

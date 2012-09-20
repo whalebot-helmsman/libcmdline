@@ -43,6 +43,7 @@ void cmdline_str( cmdline_option_parser_t* parser
 
 void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv);
 
+cmdline_cast_arg_result_e dumb_caster(const char* cast_from, void* cast_to);
 #ifdef __cplusplus
 }/*extern "C"*/
 #endif
