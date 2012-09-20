@@ -1,12 +1,7 @@
+#pragma once
+#include <src/cmdline_utils.h>
+
 #include <gtest/gtest.h>
-#include <src/cmdline.h>
-
-
-static cmdline_cast_arg_result_e dumb_caster( const char* /*cast_from*/
-                                            , void*       /*cast_to*/ )
-{
-    return cmdline_cast_arg_success;
-}
 
 TEST(OptionsTest, you_cannot_create_option_or_flag_wth_empty_names)
 {

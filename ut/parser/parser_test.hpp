@@ -1,5 +1,7 @@
-#include <gtest/gtest.h>
+#pragma once
 #include <src/cmdline_utils.h>
+
+#include <gtest/gtest.h>
 
 TEST(ParserTest, you_can_create_parser_wth_no_options)
 {
@@ -8,12 +10,6 @@ TEST(ParserTest, you_can_create_parser_wth_no_options)
     EXPECT_NE(not_created, create_try);
     EXPECT_EQ(0, cmdline_option_parser_options_count(create_try));
     cmdline_option_parser_destroy(create_try);
-}
-
-static cmdline_cast_arg_result_e dumb_caster( const char* /*cast_from*/
-                                            , void*       /*cast_to*/ )
-{
-    return cmdline_cast_arg_success;
 }
 
 TEST(ParserTest, you_cannot_add_option_to_emtpy_parser_or_emtpy_option_to_parser)
