@@ -23,7 +23,7 @@ void cmdline_opt( cmdline_option_parser_t* parser
                 , char              short_key
                 , const char*       long_key
                 , const char*       desc
-                , long int*         value
+                , void*             value
                 , const char*       default_value
                 , cmdline_cast_arg  caster
                 , int               required );
