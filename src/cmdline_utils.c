@@ -104,7 +104,7 @@ void cmdline_opt( cmdline_option_parser_t* parser
                                                          , caster
                                                          , default_value
                                                          , required );
-    return cmdline_add_internal(parser, option);
+    cmdline_add_internal(parser, option);
 
 }
 
@@ -119,16 +119,16 @@ void cmdline_flag( cmdline_option_parser_t* parser
                                                        , long_key
                                                        , desc
                                                        , value );
-    return cmdline_add_internal(parser, option);
+    cmdline_add_internal(parser, option);
 }
 
 void cmdline_help(cmdline_option_parser_t* parser, char short_key)
 {
-    return cmdline_flag( parser
-                       , short_key
-                       , "help"
-                       , "show this message"
-                       , cmdline_option_parser_help_flag(parser) );
+    cmdline_flag( parser
+                , short_key
+                , "help"
+                , "show this message"
+                , cmdline_option_parser_help_flag(parser) );
 }
 
 void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
