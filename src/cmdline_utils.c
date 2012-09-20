@@ -130,3 +130,18 @@ int cmdline_help(cmdline_option_parser_t* parser, char short_key)
                        , "show this message"
                        , cmdline_option_parser_help_flag(parser) );
 }
+
+int cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
+{
+    cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
+                                                                           , argc
+                                                                           , argv );
+    if (cmdline_option_parser_status_ok != result.status) {
+        cmdline_option_parser_report_print(result, argc, argv);
+        cmdline_option_parser_print_help(parser);
+        cmdline_option_parser_destroy(parser);
+        return 1;
+    }
+
+    return 0;
+}
