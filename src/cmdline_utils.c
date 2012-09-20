@@ -64,3 +64,60 @@ cmdline_option_t* cmdline_help_option_create( char  short_key
                               , "show this message"
                               , value );
 }
+
+int cmdline_add_internal( cmdline_option_parser_t* parser
+                        , cmdline_option_t*        option )
+{
+
+    cmdline_is_option_add_e status = cmdline_option_parser_add_option( parser
+                                                                     , option );
+    if (cmdline_option_add_success == status) {
+        return 1;
+    }
+
+    cmdline_option_parser_add_report(option, status);
+
+    if (NULL != option) {
+        cmdline_option_destroy(option);
+    }
+
+    if (NULL != parser) {
+        cmdline_option_parser_destroy(parser);
+    }
+
+    return 0;
+}
+
+int cmdline_opt( cmdline_option_parser_t* parser
+                , char              short_key
+                , const char*       long_key
+                , const char*       desc
+                , long int*         value
+                , const char*       default_value
+                , cmdline_cast_arg  caster
+                , int               required )
+{
+    cmdline_option_t*   option  =   cmdline_option_create( short_key
+                                                         , long_key
+                                                         , desc
+                                                         , value
+                                                         , caster
+                                                         , default_value
+                                                         , required );
+    return cmdline_add_internal(parser, option);
+
+}
+
+int cmdline_flag( cmdline_option_parser_t* parser
+                , char        short_key
+                , const char* long_key
+                , const char* desc
+                , int*        value )
+{
+
+    cmdline_option_t*   option  =   cmdline_flag_create( short_key
+                                                       , long_key
+                                                       , desc
+                                                       , value );
+    return cmdline_add_internal(parser, option);
+}
