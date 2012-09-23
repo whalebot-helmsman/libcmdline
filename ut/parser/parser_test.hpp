@@ -362,6 +362,19 @@ TEST(ParserTest, you_can_use_free_params)
     cmdline_option_parser_destroy(parser);
 }
 
+TEST(ParserTest, you_cannot_pass_unknown_long_option_wth_value_after_equal_sign)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    char*   argv[]  =   {"some_command", "--aa=2"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_unknown_option, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
+
 TEST(ParserTest, you_can_pass_long_option_wth_value_after_equal_sign)
 {
     cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
