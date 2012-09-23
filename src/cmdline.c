@@ -535,7 +535,8 @@ typedef enum cmdline_arg_type_s {
     cmdline_arg_type_short_key,
     cmdline_arg_type_long_key,
     cmdline_arg_type_error,
-    cmdline_arg_type_long_key_wth_value
+    cmdline_arg_type_long_key_wth_value,
+    cmdline_arg_type_short_key_complex
 } cmdline_arg_type_e;
 
 cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int length)
@@ -556,7 +557,7 @@ cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int len
     }
 
     if ((2 < length) && (param[0] == key_sign) && (param[1] != key_sign)) {
-        return cmdline_arg_type_error;
+        return cmdline_arg_type_short_key_complex;
     }
 
     if (NULL != strchr(param, equal_sign)) {
@@ -754,6 +755,20 @@ void cmdline_option_parser_set_long_key_wth_value( const char* long_key_wth_valu
     cmdline_option_parser_set_value(equal_sign_pos + 1, parser, state, report);
 }
 
+void cmdline_option_parser_set_short_key_complex( const char* short_key_complex
+                                                , cmdline_option_parser_t* parser
+                                                , cmdline_option_parser_parsing_state_t* state
+                                                , cmdline_option_parser_report_t* report )
+{
+    const char* complex_iterator    =   short_key_complex;
+
+    while (  (!cmdline_is_reperesentation_set(&report->option_wth_error))
+          && ('\0' != *complex_iterator) ) {
+        cmdline_option_parser_set_short_key(*complex_iterator, parser, state, report);
+        complex_iterator    +=  1;
+    }
+}
+
 void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
                                          , int argc
                                          , char** argv
@@ -785,6 +800,9 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
             case cmdline_arg_type_long_key_wth_value :
                 cmdline_option_parser_set_long_key_wth_value(param + 2, parser, state, report);
                 break;
+            case cmdline_arg_type_short_key_complex :
+                cmdline_option_parser_set_short_key_complex(param + 1, parser, state, report);
+                break;
 
             default:
                 exit(1);
@@ -804,10 +822,10 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
         return;
     }
 
-    int index_of_reuired_and_unmarked   =   cmdline_option_parser_parsing_state_is_all_required_marked(state);
+    int index_of_required_and_unmarked  =   cmdline_option_parser_parsing_state_is_all_required_marked(state);
 
-    if (state->options_count != index_of_reuired_and_unmarked) {
-        cmdline_get_representation( cmdline_option_vector_at(&parser->options, index_of_reuired_and_unmarked)
+    if (state->options_count != index_of_required_and_unmarked) {
+        cmdline_get_representation( cmdline_option_vector_at(&parser->options, index_of_required_and_unmarked)
                                   , &report->option_wth_error);
         report->argument_index  =   -1;
         report->status          =   cmdline_option_parser_status_no_required_option;

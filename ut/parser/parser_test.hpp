@@ -344,7 +344,7 @@ TEST(ParserTest, you_cannot_use_long_options_as_short)
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
-    EXPECT_EQ(cmdline_option_parser_status_wrong_option_format, report.status);
+    EXPECT_EQ(cmdline_option_parser_status_unknown_option, report.status);
     cmdline_option_parser_destroy(parser);
 }
 
@@ -399,6 +399,26 @@ TEST(ParserTest, you_cannot_pass_flag_long_option_wth_value_after_equal_sign)
 
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
     EXPECT_EQ(cmdline_option_parser_status_wrong_option_format, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_can_use_flag_battery)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    int                             tester1     =   1;
+    int                             tester2     =   1;
+    int                             tester3     =   1;
+    cmdline_flag(parser, 'a', NULL, NULL, &tester1);
+    cmdline_flag(parser, 'b', NULL, NULL, &tester2);
+    cmdline_flag(parser, 'c', NULL, NULL, &tester3);
+    char*   argv[]  =   {"some_command", "-abc"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_EQ(cmdline_flag_set, tester1);
+    EXPECT_EQ(cmdline_flag_set, tester2);
+    EXPECT_EQ(cmdline_flag_set, tester3);
     cmdline_option_parser_destroy(parser);
 }
 
