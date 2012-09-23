@@ -97,3 +97,15 @@ TEST(OptionsTest, you_cannot_create_option_long_key_starting_from_dash)
                                                 , NULL
                                                 , cmdline_option_not_required ));
 }
+TEST(OptionsTest, you_cannot_create_option_long_key_with_equal_sign)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    EXPECT_EQ(not_created, cmdline_option_create( 'a'
+                                                , "asa=das"
+                                                , NULL
+                                                , &flag
+                                                , dumb_caster
+                                                , NULL
+                                                , cmdline_option_not_required ));
+}

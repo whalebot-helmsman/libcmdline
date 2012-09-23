@@ -36,6 +36,10 @@ int cmdline_option_validate_long_key(const char* long_key)
         return 0;
     }
 
+    if (NULL != strchr(long_key, '=')) {
+        return 0;
+    }
+
     int idx     =   0;
     int is_ok   =   1;
     while ((1 == is_ok) && (idx != length)) {
@@ -530,12 +534,14 @@ typedef enum cmdline_arg_type_s {
     cmdline_arg_type_value,
     cmdline_arg_type_short_key,
     cmdline_arg_type_long_key,
-    cmdline_arg_type_error
+    cmdline_arg_type_error,
+    cmdline_arg_type_long_key_wth_value
 } cmdline_arg_type_e;
 
 cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int length)
 {
     char    key_sign    =   '-';
+    char    equal_sign  =   '=';
 
     if (0 == length) {
         return cmdline_arg_type_error;
@@ -551,6 +557,10 @@ cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int len
 
     if ((2 < length) && (param[0] == key_sign) && (param[1] != key_sign)) {
         return cmdline_arg_type_error;
+    }
+
+    if (NULL != strchr(param, equal_sign)) {
+        return cmdline_arg_type_long_key_wth_value;
     }
 
     return cmdline_arg_type_long_key;
@@ -679,6 +689,71 @@ void cmdline_option_parser_set_long_key( const char* long_key
     cmdline_option_parser_set_option(option_pos, parser, state, report);
 }
 
+typedef struct cmdline_buffer_s {
+    const char*     buffer;
+    unsigned int    size;
+} cmdline_buffer_t;
+
+static int cmdline_long_key_wth_value_locator(cmdline_option_t* option, void* context)
+{
+    cmdline_buffer_t*   long_key    =   (cmdline_buffer_t*)context;
+
+    if (  (NULL != option->long_key)
+       && (strlen(option->long_key) == long_key->size)
+       && (0 == strncmp(option->long_key, long_key->buffer, long_key->size)) ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+void cmdline_option_parser_set_long_key_wth_value( const char* long_key_wth_value
+                                                 , cmdline_option_parser_t* parser
+                                                 , cmdline_option_parser_parsing_state_t* state
+                                                 , cmdline_option_parser_report_t* report )
+{
+    const char* equal_sign_pos  =   strchr(long_key_wth_value, '=');
+
+    if (NULL == equal_sign_pos) {
+        report->option_wth_error.short_key  =   '\0';
+        report->option_wth_error.long_key   =   long_key_wth_value;
+        report->argument_index              =   state->arg_index;
+        report->status                      =   cmdline_option_parser_status_wrong_option_format;
+        return;
+    }
+
+    cmdline_buffer_t                    long_key    =   { long_key_wth_value
+                                                        , equal_sign_pos - long_key_wth_value};
+
+    cmdline_option_vector_iterator_t    option_pos  =   cmdline_option_vector_find( &parser->options
+                                                                                  , cmdline_long_key_wth_value_locator
+                                                                                  , (void*)&long_key );
+    if (cmdline_option_vector_end(&parser->options) == option_pos) {
+        report->option_wth_error.short_key  =   '\0';
+        report->option_wth_error.long_key   =   long_key_wth_value;
+        report->argument_index              =   state->arg_index;
+        report->status                      =   cmdline_option_parser_status_unknown_option;
+        return;
+    }
+
+    cmdline_option_parser_set_option(option_pos, parser, state, report);
+
+    if (cmdline_is_reperesentation_set(&report->option_wth_error)) {
+        return;
+    }
+
+    if (NULL == state->marked_option) {
+        report->option_wth_error.short_key  =   '\0';
+        report->option_wth_error.long_key   =   long_key_wth_value;
+        report->argument_index              =   state->arg_index;
+        report->status                      =   cmdline_option_parser_status_wrong_option_format;
+        return;
+    }
+
+    cmdline_option_parser_set_value(equal_sign_pos + 1, parser, state, report);
+}
+
 void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
                                          , int argc
                                          , char** argv
@@ -706,6 +781,9 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
                 break;
             case cmdline_arg_type_long_key :
                 cmdline_option_parser_set_long_key(param + 2, parser, state, report);
+                break;
+            case cmdline_arg_type_long_key_wth_value :
+                cmdline_option_parser_set_long_key_wth_value(param + 2, parser, state, report);
                 break;
 
             default:
