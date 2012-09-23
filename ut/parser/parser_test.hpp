@@ -361,3 +361,31 @@ TEST(ParserTest, you_can_use_free_params)
     EXPECT_EQ(3, end - begin);
     cmdline_option_parser_destroy(parser);
 }
+
+TEST(ParserTest, you_can_pass_long_option_wth_value_after_equal_sign)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
+    char*   argv[]  =   {"some_command", "--aa=2"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_EQ(2, tester);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_pass_flag_long_option_wth_value_after_equal_sign)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    int                             tester      =   1;
+    cmdline_flag(parser, 'b', "aa", "aa desc", &tester);
+    char*   argv[]  =   {"some_command", "--aa=2"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_wrong_option_format, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
