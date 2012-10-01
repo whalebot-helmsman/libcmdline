@@ -305,6 +305,7 @@ struct cmdline_option_parser_s {
     cmdline_option_parser_free_params_t*    free_params;
     int                                     is_help_asked;
     const char*                             description;
+    const char*                             free_params_description;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -406,6 +407,12 @@ void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
                                           , const char*              description )
 {
     parser->description =   description;
+}
+
+void cmdline_option_parser_add_free_params_description( cmdline_option_parser_t* parser
+                                                      , const char*              description )
+{
+    parser->free_params_description =   description;
 }
 
 static int cmdline_is_reperesentation_set(cmdline_option_representation_t* repr)
@@ -1032,6 +1039,10 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
         cmdline_option_key_print(option, keys_max_size);
         cmdline_option_description_print(option, description_max_size);
         iter    +=  1;
+    }
+
+    if (NULL != parser->free_params_description) {
+        fprintf(stderr, "free params: %s\n", parser->free_params_description);
     }
 }
 
