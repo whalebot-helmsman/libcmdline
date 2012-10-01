@@ -329,7 +329,9 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
-    parser->is_help_asked   =   cmdline_flag_not_set;
+    parser->is_help_asked           =   cmdline_flag_not_set;
+    parser->description             =   NULL;
+    parser->free_params_description =   NULL;
 
     return parser;
 }
