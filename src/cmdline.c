@@ -304,6 +304,7 @@ struct cmdline_option_parser_s {
     cmdline_option_vector_t                 options;
     cmdline_option_parser_free_params_t*    free_params;
     int                                     is_help_asked;
+    const char*                             description;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -399,6 +400,12 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
     }
 
     return cmdline_option_add_success;
+}
+
+void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
+                                          , const char*              description )
+{
+    parser->description =   description;
 }
 
 static int cmdline_is_reperesentation_set(cmdline_option_representation_t* repr)
@@ -994,6 +1001,10 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
 {
     unsigned int    keys_max_size           =   0;
     unsigned int    description_max_size    =   0;
+
+    if (NULL != parser->description) {
+        fprintf(stderr, "Description: %s\n", parser->description);
+    }
 
     cmdline_option_vector_iterator_t    begin   =   cmdline_option_vector_begin(&parser->options);
     cmdline_option_vector_iterator_t    end     =   cmdline_option_vector_end(&parser->options);
