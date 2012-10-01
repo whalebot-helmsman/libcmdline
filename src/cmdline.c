@@ -532,7 +532,6 @@ int cmdline_option_parser_parsing_state_is_all_required_marked(cmdline_option_pa
 
 typedef enum cmdline_arg_type_s {
     cmdline_arg_type_value,
-    cmdline_arg_type_short_key,
     cmdline_arg_type_long_key,
     cmdline_arg_type_error,
     cmdline_arg_type_long_key_wth_value,
@@ -552,11 +551,7 @@ cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int len
         return cmdline_arg_type_value;
     }
 
-    if ((2 == length) && (param[0] == key_sign)) {
-        return cmdline_arg_type_short_key;
-    }
-
-    if ((2 < length) && (param[0] == key_sign) && (param[1] != key_sign)) {
+    if ((2 <= length) && (param[0] == key_sign) && (param[1] != key_sign)) {
         return cmdline_arg_type_short_key_complex;
     }
 
@@ -805,9 +800,6 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
         switch (type) {
             case cmdline_arg_type_value :
                 cmdline_option_parser_set_value(param, parser, state, report);
-                break;
-            case cmdline_arg_type_short_key :
-                cmdline_option_parser_set_short_key(param[1], parser, state, report);
                 break;
             case cmdline_arg_type_long_key :
                 cmdline_option_parser_set_long_key(param + 2, parser, state, report);
