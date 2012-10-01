@@ -763,10 +763,25 @@ void cmdline_option_parser_set_short_key_complex( const char* short_key_complex
     const char* complex_iterator    =   short_key_complex;
 
     while (  (!cmdline_is_reperesentation_set(&report->option_wth_error))
-          && ('\0' != *complex_iterator) ) {
+          && ('\0' != *complex_iterator)
+          && (NULL == state->marked_option) ) {
         cmdline_option_parser_set_short_key(*complex_iterator, parser, state, report);
         complex_iterator    +=  1;
     }
+
+    if (cmdline_is_reperesentation_set(&report->option_wth_error)) {
+        return;
+    }
+
+    if ('\0' == *complex_iterator) {
+        return;
+    }
+
+    if ('=' == *complex_iterator) {
+        complex_iterator    +=  1;
+    }
+
+    cmdline_option_parser_set_value(complex_iterator, parser, state, report);
 }
 
 void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser

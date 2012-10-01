@@ -422,3 +422,34 @@ TEST(ParserTest, you_can_use_flag_battery)
     cmdline_option_parser_destroy(parser);
 }
 
+TEST(ParserTest, you_can_pass_short_option_wth_value)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    int                             tester1     =   1;
+    cmdline_flag(parser, 'a', NULL, NULL, &tester1);
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
+    char*   argv[]  =   {"some_command", "-ab=21"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_EQ(21, tester);
+    EXPECT_EQ(tester1, cmdline_flag_set);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_can_pass_short_option_wth_value_after_equal_sign)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, REQ);
+    char*   argv[]  =   {"some_command", "-b=21"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_EQ(21, tester);
+    cmdline_option_parser_destroy(parser);
+}
+
