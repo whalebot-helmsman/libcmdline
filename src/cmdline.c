@@ -578,13 +578,33 @@ cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int len
     return cmdline_arg_type_long_key;
 }
 
+static const char* remove_dash_escaping(const char* value)
+{
+    if (value[0] != '/') {
+        return value;
+    }
+
+    const char* value_iter   =   value + 1;
+    while ((*value_iter) && (*value_iter == '/')) {
+        value_iter  +=  1;
+    }
+
+    if (*value_iter == '-') {
+        return value + 1;
+    }
+
+    return value;
+}
+
 void cmdline_option_parser_set_value( const char* value
                                     , cmdline_option_parser_t* parser
                                     , cmdline_option_parser_parsing_state_t* state
                                     , cmdline_option_parser_report_t* report )
 {
+    const char* unescaped_value =   remove_dash_escaping(value);
+
     if (NULL == state->marked_option) {
-        cmdline_option_vector_add_result_t  res =   cmdline_option_parser_free_params_push(parser->free_params, value);
+        cmdline_option_vector_add_result_t  res =   cmdline_option_parser_free_params_push(parser->free_params, unescaped_value);
         if (cmdline_option_vector_add_result_failure == res) {
             report->option_wth_error.long_key   =   NULL;
             report->option_wth_error.short_key  =   '\0';
@@ -594,7 +614,7 @@ void cmdline_option_parser_set_value( const char* value
         return;
     }
 
-    cmdline_cast_arg_result_e   res =   state->marked_option->caster( value
+    cmdline_cast_arg_result_e   res =   state->marked_option->caster( unescaped_value
                                                                     , state->marked_option->value );
     if (cmdline_cast_arg_failure == res) {
         cmdline_get_representation(state->marked_option, &report->option_wth_error);
