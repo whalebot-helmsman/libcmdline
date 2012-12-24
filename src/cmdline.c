@@ -791,6 +791,14 @@ void cmdline_option_parser_set_short_key_complex( const char* short_key_complex
                                                 , cmdline_option_parser_parsing_state_t* state
                                                 , cmdline_option_parser_report_t* report )
 {
+    if (NULL != state->marked_option) {
+        report->option_wth_error.short_key  =   state->marked_option->short_key;
+        report->option_wth_error.long_key   =   state->marked_option->long_key;
+        report->argument_index              =   state->arg_index;
+        report->status                      =   cmdline_option_parser_status_no_arg;
+        return;
+    }
+
     const char* complex_iterator    =   short_key_complex;
 
     while (  (!cmdline_is_reperesentation_set(&report->option_wth_error))
