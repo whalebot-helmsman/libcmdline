@@ -467,3 +467,15 @@ TEST(ParserTest, you_can_use_params_with_dash_in_start)
     EXPECT_STREQ("-b", *cmdline_option_parser_free_params_begin(parser));
     cmdline_option_parser_destroy(parser);
 }
+
+TEST(ParserTest, you_cannot_use_wrong_negative_value_format)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    long int                        tester      =   1;
+    cmdline_int(parser, 'b', "aa", "aa desc", &tester, NULL, NOT_REQ);
+    char*   argv[]  =   {"some_command", "-b", "-21"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_no_arg, report.status);
+}
