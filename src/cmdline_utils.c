@@ -17,6 +17,21 @@ cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
     return cmdline_cast_arg_success;
 }
 
+cmdline_cast_arg_result_e cast_double_arg( const char* cast_from
+                                         , void*       cast_to )
+{
+    double*     value       =   (double*)cast_to;
+    char*       stop_symbol =   NULL;
+    double      memorize    =   strtod(cast_from, &stop_symbol);
+
+    if ('\0' != *stop_symbol) {
+        return cmdline_cast_arg_failure;
+    }
+
+    *value  =   memorize;
+    return cmdline_cast_arg_success;
+}
+
 cmdline_option_t* cmdline_int_option_create( char        short_key
                                            , const char* long_key
                                            , const char* desc
@@ -149,6 +164,23 @@ void cmdline_int( cmdline_option_parser_t* parser
                , required );
 }
 
+void cmdline_double( cmdline_option_parser_t* parser
+                   , char              short_key
+                   , const char*       long_key
+                   , const char*       desc
+                   , double*           value
+                   , const char*       default_value
+                   , int               required )
+{
+    cmdline_opt( parser
+               , short_key
+               , long_key
+               , desc
+               , value
+               , default_value
+               , cast_double_arg
+               , required );
+}
 void cmdline_str( cmdline_option_parser_t* parser
                 , char              short_key
                 , const char*       long_key

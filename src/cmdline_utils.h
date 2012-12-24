@@ -38,6 +38,15 @@ void cmdline_str( cmdline_option_parser_t* parser
                 , const char*       default_value
                 , int               required );
 
+void cmdline_double( cmdline_option_parser_t* parser
+                   , char              short_key
+                   , const char*       long_key
+                   , const char*       desc
+                   , double*           value
+                   , const char*       default_value
+                   , int               required );
+
+
 #define NOT_REQ cmdline_option_not_required
 #define REQ cmdline_option_required
 
