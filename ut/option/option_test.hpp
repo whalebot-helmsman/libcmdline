@@ -36,6 +36,19 @@ TEST(OptionsTest, you_cannot_create_option_or_flag_wth_null_output)
                                               , NULL ));
 }
 
+TEST(OptionsTest, you_cannot_create_option_with_forbidden_requirement)
+{
+    int                 tester;
+    cmdline_option_t*   not_created =   NULL;
+    EXPECT_EQ(not_created, cmdline_option_create( 'a'
+                                                , "aa"
+                                                , "aa desc"
+                                                , static_cast<void*>(&tester)
+                                                , dumb_caster
+                                                , "1"
+                                                , cmdline_option_forbiddien ));
+}
+
 TEST(OptionsTest, you_cannot_create_option_wth_null_caster)
 {
     int                 tester;

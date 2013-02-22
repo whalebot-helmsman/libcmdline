@@ -16,7 +16,8 @@ typedef cmdline_cast_arg_result_e (*cmdline_cast_arg) ( const char* cast_from
 
 typedef enum cmdline_is_option_required_s {
     cmdline_option_not_required = 0,
-    cmdline_option_required
+    cmdline_option_required,
+    cmdline_option_forbiddien,
 } cmdline_is_option_required_t;
 
 cmdline_option_t* cmdline_option_create( char              short_key
