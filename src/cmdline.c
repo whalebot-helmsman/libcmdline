@@ -244,6 +244,7 @@ static void cmdline_option_vector_destroy(cmdline_option_vector_t* options)
 typedef struct cmdline_option_parser_free_params_s {
     const char**    buffer;
     int             size;
+    int             is_required;
 } cmdline_option_parser_free_params_t;
 
 cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_init()
@@ -254,9 +255,10 @@ cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_init()
         return NULL;
     }
 
-    free_params->buffer     =   malloc(sizeof(cmdline_option_t*));
-    *free_params->buffer    =   NULL;
-    free_params->size       =   0;
+    free_params->buffer         =   malloc(sizeof(cmdline_option_t*));
+    *free_params->buffer        =   NULL;
+    free_params->size           =   0;
+    free_params->is_required    =   cmdline_option_not_required;
 
     return free_params;
 }
@@ -605,9 +607,19 @@ void cmdline_option_parser_set_value( const char* value
                                     , cmdline_option_parser_parsing_state_t* state
                                     , cmdline_option_parser_report_t* report )
 {
+
     const char* unescaped_value =   remove_dash_escaping(value);
 
     if (NULL == state->marked_option) {
+
+        if (cmdline_option_forbiddien == parser->free_params->is_required) {
+            report->option_wth_error.long_key   =   NULL;
+            report->option_wth_error.short_key  =   '\0';
+            report->argument_index              =   state->arg_index;
+            report->status                      =   cmdline_option_parser_status_unexpected_free_params;
+            return;
+        }
+
         cmdline_option_vector_add_result_t  res =   cmdline_option_parser_free_params_push(parser->free_params, unescaped_value);
         if (cmdline_option_vector_add_result_failure == res) {
             report->option_wth_error.long_key   =   NULL;
@@ -884,6 +896,16 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
                                   , &report->option_wth_error);
         report->argument_index  =   -1;
         report->status          =   cmdline_option_parser_status_no_required_option;
+        return;
+    }
+
+    if (  (cmdline_option_required == parser->free_params->is_required)
+       && (cmdline_option_parser_free_params_begin(parser) == cmdline_option_parser_free_params_end(parser)) ) {
+        report->option_wth_error.long_key   =   NULL;
+        report->option_wth_error.short_key  =   '\0';
+        report->argument_index              =   -1;
+        report->status                      =   cmdline_option_parser_status_no_required_free_params;
+        return;
     }
 }
 
@@ -928,6 +950,11 @@ cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_b
     return cmdline_free_params_begin(parser->free_params);
 }
 
+void cmdline_option_parser_set_free_params_requiremnt( cmdline_option_parser_t*     parser
+                                                     , cmdline_is_option_required_t required )
+{
+    parser->free_params->is_required    =   required;
+}
 cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_end(cmdline_option_parser_t* parser)
 {
     return cmdline_free_params_end(parser->free_params);
@@ -1180,6 +1207,10 @@ const char* cmdline_option_parser_status_to_human(cmdline_option_parser_status_e
             return "memory error";
         case cmdline_option_parser_status_show_help:
             return "Usage:";
+        case cmdline_option_parser_status_unexpected_free_params:
+            return "free params forbidden, but used";
+        case cmdline_option_parser_status_no_required_free_params:
+            return "free params required";
         default:
             return "unknown status";
     }

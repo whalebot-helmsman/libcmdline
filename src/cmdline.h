@@ -71,6 +71,8 @@ typedef const char** cmdline_option_parser_free_params_iterator_t;
 cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_begin(cmdline_option_parser_t* parser);
 cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_end(cmdline_option_parser_t* parser);
 
+void cmdline_option_parser_set_free_params_requiremnt( cmdline_option_parser_t*     parser
+                                                     , cmdline_is_option_required_t required );
 typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_ok = 0,
     cmdline_option_parser_status_unknown_option,
@@ -81,7 +83,9 @@ typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_wrong_value,
     cmdline_option_parser_status_wrong_option_format,
     cmdline_option_parser_status_memory_error,
-    cmdline_option_parser_status_show_help
+    cmdline_option_parser_status_show_help,
+    cmdline_option_parser_status_no_required_free_params,
+    cmdline_option_parser_status_unexpected_free_params,
 } cmdline_option_parser_status_e;
 
 typedef struct cmdline_option_represenatation_s {

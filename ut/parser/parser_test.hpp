@@ -479,3 +479,40 @@ TEST(ParserTest, you_cannot_use_wrong_negative_value_format)
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
     EXPECT_EQ(cmdline_option_parser_status_no_arg, report.status);
 }
+
+TEST(ParserTest, you_cannot_pass_free_options_when_they_are_forbidden)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    cmdline_option_parser_set_free_params_requiremnt(parser, cmdline_option_forbiddien);
+    char*   argv[]  =   {"some_command", "some-free-option"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_unexpected_free_params, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_not_pass_free_options_when_they_are_required)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    cmdline_option_parser_set_free_params_requiremnt(parser, cmdline_option_required);
+    char*   argv[]  =   {"some_command"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_no_required_free_params, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_can_pass_free_options_when_they_are_required)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    cmdline_option_parser_set_free_params_requiremnt(parser, cmdline_option_required);
+    char*   argv[]  =   {"some_command", "some-free-option"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+
