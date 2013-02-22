@@ -62,6 +62,10 @@ static cmdline_option_t* cmdline_option_create_internal( char              short
                                                        , int               is_use_param
                                                        , int               required )
 {
+    if (cmdline_option_forbiddien == required) {
+        return NULL;
+    }
+
     if (('\0' == short_key) && (NULL == long_key)) {
         return NULL;
     }
