@@ -17,7 +17,7 @@ typedef cmdline_cast_arg_result_e (*cmdline_cast_arg) ( const char* cast_from
 typedef enum cmdline_is_option_required_s {
     cmdline_option_not_required = 0,
     cmdline_option_required,
-    cmdline_option_forbiddien,
+    cmdline_option_forbiddien
 } cmdline_is_option_required_t;
 
 cmdline_option_t* cmdline_option_create( char              short_key
@@ -85,7 +85,7 @@ typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_memory_error,
     cmdline_option_parser_status_show_help,
     cmdline_option_parser_status_no_required_free_params,
-    cmdline_option_parser_status_unexpected_free_params,
+    cmdline_option_parser_status_unexpected_free_params
 } cmdline_option_parser_status_e;
 
 typedef struct cmdline_option_represenatation_s {
