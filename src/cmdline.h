@@ -18,7 +18,7 @@ typedef enum cmdline_is_option_required_s {
     cmdline_option_not_required = 0,
     cmdline_option_required,
     cmdline_option_forbiddien
-} cmdline_is_option_required_t;
+} cmdline_is_option_required_e;
 
 cmdline_option_t* cmdline_option_create( char              short_key
                                        , const char*       long_key
@@ -72,7 +72,7 @@ cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_b
 cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_end(cmdline_option_parser_t* parser);
 
 void cmdline_option_parser_set_free_params_requiremnt( cmdline_option_parser_t*     parser
-                                                     , cmdline_is_option_required_t required );
+                                                     , cmdline_is_option_required_e required );
 typedef enum cmdline_option_parser_status_s {
     cmdline_option_parser_status_ok = 0,
     cmdline_option_parser_status_unknown_option,

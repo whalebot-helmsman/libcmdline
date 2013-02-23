@@ -951,7 +951,7 @@ cmdline_option_parser_free_params_iterator_t cmdline_option_parser_free_params_b
 }
 
 void cmdline_option_parser_set_free_params_requiremnt( cmdline_option_parser_t*     parser
-                                                     , cmdline_is_option_required_t required )
+                                                     , cmdline_is_option_required_e required )
 {
     parser->free_params->is_required    =   required;
 }
