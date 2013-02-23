@@ -245,6 +245,7 @@ typedef struct cmdline_option_parser_free_params_s {
     const char**    buffer;
     int             size;
     int             is_required;
+    const char*     description;
 } cmdline_option_parser_free_params_t;
 
 cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_init()
@@ -259,6 +260,7 @@ cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_init()
     *free_params->buffer        =   NULL;
     free_params->size           =   0;
     free_params->is_required    =   cmdline_option_not_required;
+    free_params->description    =   NULL;
 
     return free_params;
 }
@@ -311,7 +313,7 @@ struct cmdline_option_parser_s {
     cmdline_option_parser_free_params_t*    free_params;
     int                                     is_help_asked;
     const char*                             description;
-    const char*                             free_params_description;
+    //const char*                             free_params_description;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -337,7 +339,6 @@ cmdline_option_parser_t* cmdline_option_parser_create()
 
     parser->is_help_asked           =   cmdline_flag_not_set;
     parser->description             =   NULL;
-    parser->free_params_description =   NULL;
 
     return parser;
 }
@@ -420,7 +421,7 @@ void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
 void cmdline_option_parser_add_free_params_description( cmdline_option_parser_t* parser
                                                       , const char*              description )
 {
-    parser->free_params_description =   description;
+    parser->free_params->description    =   description;
 }
 
 static int cmdline_is_reperesentation_set(cmdline_option_representation_t* repr)
@@ -1102,8 +1103,8 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
         iter    +=  1;
     }
 
-    if (NULL != parser->free_params_description) {
-        fprintf(stderr, "free params: %s\n", parser->free_params_description);
+    if (NULL != parser->free_params->description) {
+        fprintf(stderr, "free params: %s\n", parser->free_params->description);
     }
 }
 
