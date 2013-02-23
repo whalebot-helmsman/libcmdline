@@ -211,8 +211,14 @@ void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
         exit(1);
     }
 }
+#if (__GNUC__ > 2) || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+#       define PGM_GNUC_UNUSED         __attribute__((__unused__))
+#else
+#       define PGM_GNUC_UNUSED
+#endif
 
-cmdline_cast_arg_result_e dumb_caster(const char* cast_from, void* cast_to)
+cmdline_cast_arg_result_e dumb_caster( PGM_GNUC_UNUSED const char* cast_from
+                                     , PGM_GNUC_UNUSED void* cast_to)
 {
     return cmdline_cast_arg_success;
 }
