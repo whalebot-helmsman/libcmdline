@@ -313,7 +313,6 @@ struct cmdline_option_parser_s {
     cmdline_option_parser_free_params_t*    free_params;
     int                                     is_help_asked;
     const char*                             description;
-    //const char*                             free_params_description;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
