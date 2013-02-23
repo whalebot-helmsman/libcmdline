@@ -248,7 +248,7 @@ typedef struct cmdline_option_parser_free_params_s {
     const char*     description;
 } cmdline_option_parser_free_params_t;
 
-cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_init()
+cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_create()
 {
     cmdline_option_parser_free_params_t* free_params    =   malloc(sizeof(cmdline_option_parser_free_params_t));
 
@@ -329,7 +329,7 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
-    parser->free_params =   cmdline_option_parser_free_params_init();
+    parser->free_params =   cmdline_option_parser_free_params_create();
 
     if (NULL == parser->free_params) {
         cmdline_option_parser_destroy(parser);
