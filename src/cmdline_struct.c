@@ -70,6 +70,122 @@ void cmdline_option_parser_iface_parse_full(void* self, int argc, char** argv)
     }
 }
 
+cmdline_is_option_add_e cmdline_option_parser_iface_add_option( void*             self
+                                                              , cmdline_option_t* option )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    return cmdline_option_parser_add_option(self_typed->base, option);
+}
+
+void cmdline_option_parser_iface_add_option_full_internal( void*             self
+                                                         , cmdline_option_t* option )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    cmdline_is_option_add_e         status      =   self_typed->add_option( self_typed
+                                                                          , option );
+    if (cmdline_option_add_success == status) {
+        return;
+    }
+
+    cmdline_option_parser_add_report(option, status);
+
+    if (NULL != option) {
+        cmdline_option_destroy(option);
+    }
+
+    self_typed->destruct(self_typed);
+    exit(1);
+}
+
+void cmdline_option_parser_iface_add_opt( void*             self
+                                        , char              short_key
+                                        , const char*       long_key
+                                        , const char*       desc
+                                        , void*             value
+                                        , const char*       default_value
+                                        , cmdline_cast_arg  caster
+                                        , int               required )
+{
+    cmdline_option_t*   option      =   cmdline_option_create( short_key
+                                                             , long_key
+                                                             , desc
+                                                             , value
+                                                             , caster
+                                                             , default_value
+                                                             , required );
+    cmdline_option_parser_iface_add_option_full_internal(self, option);
+}
+
+void cmdline_option_parser_iface_add_flag( void*       self
+                                         , char        short_key
+                                         , const char* long_key
+                                         , const char* desc
+                                         , int*        value )
+{
+    cmdline_option_t*   option  =   cmdline_flag_create( short_key
+                                                       , long_key
+                                                       , desc
+                                                       , value );
+    cmdline_option_parser_iface_add_option_full_internal(self, option);
+}
+
+void cmdline_option_parser_iface_add_int( void*       self
+                                        , char        short_key
+                                        , const char* long_key
+                                        , const char* desc
+                                        , long int*   value
+                                        , const char* default_value
+                                        , int         required )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    self_typed->add_opt( self
+                       , short_key
+                       , long_key
+                       , desc
+                       , value
+                       , default_value
+                       , cast_int_arg
+                       , required );
+}
+
+void cmdline_option_parser_iface_add_str( void*        self
+                                        , char         short_key
+                                        , const char*  long_key
+                                        , const char*  desc
+                                        , const char** value
+                                        , const char*  default_value
+                                        , int          required )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    self_typed->add_opt( self
+                       , short_key
+                       , long_key
+                       , desc
+                       , value
+                       , default_value
+                       , cast_string_arg
+                       , required );
+}
+
+void cmdline_option_parser_iface_add_double( void*       self
+                                           , char        short_key
+                                           , const char* long_key
+                                           , const char* desc
+                                           , double*     value
+                                           , const char* default_value
+                                           , int         required )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    self_typed->add_opt( self
+                       , short_key
+                       , long_key
+                       , desc
+                       , value
+                       , default_value
+                       , cast_double_arg
+                       , required );
+}
+
 cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
 {
     cmdline_option_parser_iface_t*  iface  =   malloc(sizeof(cmdline_option_parser_iface_t));
@@ -91,6 +207,12 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->report                       =   cmdline_option_parser_report_print;
     iface->full_parse                   =   cmdline_option_parser_iface_parse_full;
     iface->print_help                   =   cmdline_option_parser_iface_print_help;
+    iface->add_option                   =   cmdline_option_parser_iface_add_option;
+    iface->add_opt                      =   cmdline_option_parser_iface_add_opt;
+    iface->add_int                      =   cmdline_option_parser_iface_add_int;
+    iface->add_flag                     =   cmdline_option_parser_iface_add_flag;
+    iface->add_str                      =   cmdline_option_parser_iface_add_str;
+    iface->add_double                   =   cmdline_option_parser_iface_add_double;
 
     return iface;
 }

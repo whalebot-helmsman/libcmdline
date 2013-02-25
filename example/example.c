@@ -16,9 +16,9 @@ int main(int argc, char** argv)
 
     parser->add_help_flag(parser, 'h');
 
-    cmdline_flag(parser->base, 'f', "flag"  , "flag symbolizes something binary", &flag);
-    cmdline_int (parser->base, 'I', NULL    , "something you can count"         , &i   , "0" , NOT_REQ);
-    cmdline_str (parser->base, 's', "string", "something looks like human word" , &str , NULL, REQ);
+    parser->add_flag(parser, 'f', "flag"  , "flag symbolizes something binary", &flag);
+    parser->add_int(parser,  'I', NULL    , "something you can count"         , &i   , "0" , NOT_REQ);
+    parser->add_str(parser,  's', "string", "something looks like human word" , &str , NULL, REQ);
 
     parser->full_parse(parser, argc, argv);
 
