@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 typedef enum cmdline_is_use_param_s {
-    cmdline_do_not_use_pararm = 0,
+    cmdline_do_not_use_param = 0,
     cmdline_use_param
 } cmdline_is_use_param_e;
 
@@ -134,7 +134,7 @@ cmdline_option_t* cmdline_flag_create( char        short_key
                                          , (void*)flag
                                          , NULL
                                          , NULL
-                                         , cmdline_do_not_use_pararm
+                                         , cmdline_do_not_use_param
                                          , cmdline_option_not_required );
 }
 
@@ -453,7 +453,7 @@ static cmdline_option_representation_t cmdline_option_parser_preparse(cmdline_op
     while ((!cmdline_is_reperesentation_set(&error_option)) && (begin != end)) {
         cmdline_option_t*           option  =   *begin;
 
-        if (cmdline_do_not_use_pararm == option->is_use_param) {
+        if (cmdline_do_not_use_param == option->is_use_param) {
             /*reset flags*/
             *((int*)option->value)  =   cmdline_flag_not_set;
         }
@@ -983,7 +983,7 @@ unsigned int cmdline_option_key_size(cmdline_option_t* option)
         size    +=  strlen(option->long_key);
     }
 
-    if (cmdline_do_not_use_pararm == option->is_use_param) {
+    if (cmdline_do_not_use_param == option->is_use_param) {
         size    +=  strlen(flag_mark);
     }
 
@@ -1028,7 +1028,7 @@ void cmdline_option_key_print( cmdline_option_t* option
         fprintf(stderr, "--%s", option->long_key);
     }
 
-    if (cmdline_do_not_use_pararm == option->is_use_param) {
+    if (cmdline_do_not_use_param == option->is_use_param) {
         fprintf(stderr, "%s", flag_mark);
     }
 
