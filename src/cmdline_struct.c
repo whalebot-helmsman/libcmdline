@@ -144,7 +144,7 @@ void cmdline_option_parser_iface_add_int( void*       self
                        , desc
                        , value
                        , default_value
-                       , cast_int_arg
+                       , cmdline_cast_int_arg
                        , required );
 }
 
@@ -163,7 +163,7 @@ void cmdline_option_parser_iface_add_str( void*        self
                        , desc
                        , value
                        , default_value
-                       , cast_string_arg
+                       , cmdline_cast_string_arg
                        , required );
 }
 
@@ -182,7 +182,7 @@ void cmdline_option_parser_iface_add_double( void*       self
                        , desc
                        , value
                        , default_value
-                       , cast_double_arg
+                       , cmdline_cast_double_arg
                        , required );
 }
 

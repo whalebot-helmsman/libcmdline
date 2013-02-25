@@ -2,8 +2,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
-                                      , void*       cast_to )
+cmdline_cast_arg_result_e cmdline_cast_int_arg( const char* cast_from
+                                              , void*       cast_to )
 {
     long int*   value       =   (long int*)cast_to;
     char*       stop_symbol =   NULL;
@@ -17,8 +17,8 @@ cmdline_cast_arg_result_e cast_int_arg( const char* cast_from
     return cmdline_cast_arg_success;
 }
 
-cmdline_cast_arg_result_e cast_double_arg( const char* cast_from
-                                         , void*       cast_to )
+cmdline_cast_arg_result_e cmdline_cast_double_arg( const char* cast_from
+                                                 , void*       cast_to )
 {
     double*     value       =   (double*)cast_to;
     char*       stop_symbol =   NULL;
@@ -43,13 +43,13 @@ cmdline_option_t* cmdline_int_option_create( char        short_key
                                 , long_key
                                 , desc
                                 , (void*)value
-                                , cast_int_arg
+                                , cmdline_cast_int_arg
                                 , default_value
                                 , required );
 }
 
-cmdline_cast_arg_result_e cast_string_arg( const char* cast_from
-                                         , void*       cast_to )
+cmdline_cast_arg_result_e cmdline_cast_string_arg( const char* cast_from
+                                                 , void*       cast_to )
 {
     *(const char**)cast_to  =   cast_from;
     return cmdline_cast_arg_success;
@@ -66,7 +66,7 @@ cmdline_option_t* cmdline_string_option_create( char            short_key
                                 , long_key
                                 , desc
                                 , (void*)value
-                                , cast_string_arg
+                                , cmdline_cast_string_arg
                                 , default_value
                                 , required );
 }
@@ -160,7 +160,7 @@ void cmdline_int( cmdline_option_parser_t* parser
                , desc
                , value
                , default_value
-               , cast_int_arg
+               , cmdline_cast_int_arg
                , required );
 }
 
@@ -178,7 +178,7 @@ void cmdline_double( cmdline_option_parser_t* parser
                , desc
                , value
                , default_value
-               , cast_double_arg
+               , cmdline_cast_double_arg
                , required );
 }
 void cmdline_str( cmdline_option_parser_t* parser
@@ -195,7 +195,7 @@ void cmdline_str( cmdline_option_parser_t* parser
                , desc
                , value
                , default_value
-               , cast_string_arg
+               , cmdline_cast_string_arg
                , required );
 }
 
