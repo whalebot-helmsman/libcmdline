@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     cmdline_int (parser->base, 'I', NULL    , "something you can count"         , &i   , "0" , NOT_REQ);
     cmdline_str (parser->base, 's', "string", "something looks like human word" , &str , NULL, REQ);
 
-    cmdline_parse(parser->base, argc, argv);
+    parser->full_parse(parser, argc, argv);
 
     cmdline_option_parser_free_params_iterator_t    iter    =   parser->free_params_begin(parser);
     cmdline_option_parser_free_params_iterator_t    end     =   parser->free_params_end(parser);
