@@ -154,7 +154,7 @@ typedef enum cmdline_option_vector_add_result_s {
 } cmdline_option_vector_add_result_t;
 
 static cmdline_option_vector_add_result_t cmdline_option_vector_push( cmdline_option_vector_t* options
-                                                                    , cmdline_option_t* option )
+                                                                    , cmdline_option_t*        option )
 {
     int place   =   options->size;
 
@@ -174,7 +174,7 @@ static cmdline_option_vector_add_result_t cmdline_option_vector_push( cmdline_op
 }
 
 static cmdline_option_t* cmdline_option_vector_at( cmdline_option_vector_t* options
-                                                 , int index )
+                                                 , int                      index )
 {
     return options->buffer[index];
 }
@@ -194,8 +194,8 @@ static cmdline_option_vector_iterator_t cmdline_option_vector_end(cmdline_option
 typedef int (*condition_checker) (cmdline_option_t* option, void* context);
 
 static cmdline_option_vector_iterator_t cmdline_option_vector_find( cmdline_option_vector_t* options
-                                                                  , condition_checker checker
-                                                                  , void* context )
+                                                                  , condition_checker        checker
+                                                                  , void*                    context )
 {
     cmdline_option_vector_iterator_t    begin       =   cmdline_option_vector_begin(options);
     cmdline_option_vector_iterator_t    end         =   cmdline_option_vector_end(options);
@@ -270,7 +270,7 @@ void cmdline_option_parser_free_params_destroy(cmdline_option_parser_free_params
 }
 
 cmdline_option_vector_add_result_t cmdline_option_parser_free_params_push( cmdline_option_parser_free_params_t* free_params
-                                                                         , const char* param )
+                                                                         , const char*                          param )
 {
     int place   =   free_params->size;
 
@@ -595,10 +595,10 @@ static const char* remove_dash_escaping(const char* value)
     return value;
 }
 
-void cmdline_option_parser_set_value( const char* value
-                                    , cmdline_option_parser_t* parser
+void cmdline_option_parser_set_value( const char*                            value
+                                    , cmdline_option_parser_t*               parser
                                     , cmdline_option_parser_parsing_state_t* state
-                                    , cmdline_option_parser_report_t* report )
+                                    , cmdline_option_parser_report_t*        report )
 {
 
     const char* unescaped_value =   remove_dash_escaping(value);
@@ -635,10 +635,10 @@ void cmdline_option_parser_set_value( const char* value
     state->marked_option    =   NULL;
 }
 
-void cmdline_option_parser_set_option( cmdline_option_vector_iterator_t option_pos
-                                     , cmdline_option_parser_t* parser
+void cmdline_option_parser_set_option( cmdline_option_vector_iterator_t       option_pos
+                                     , cmdline_option_parser_t*               parser
                                      , cmdline_option_parser_parsing_state_t* state
-                                     , cmdline_option_parser_report_t* report )
+                                     , cmdline_option_parser_report_t*        report )
 {
     if (NULL != state->marked_option) {
         cmdline_get_representation(state->marked_option, &report->option_wth_error);
@@ -680,10 +680,10 @@ static int cmdline_short_key_locator(cmdline_option_t* option, void* context)
     }
 }
 
-void cmdline_option_parser_set_short_key( char short_key
-                                        , cmdline_option_parser_t* parser
+void cmdline_option_parser_set_short_key( char                                   short_key
+                                        , cmdline_option_parser_t*               parser
                                         , cmdline_option_parser_parsing_state_t* state
-                                        , cmdline_option_parser_report_t* report )
+                                        , cmdline_option_parser_report_t*        report )
 {
     cmdline_option_vector_iterator_t    option_pos  =   cmdline_option_vector_find( &parser->options
                                                                                   , cmdline_short_key_locator
@@ -711,10 +711,10 @@ static int cmdline_long_key_locator(cmdline_option_t* option, void* context)
     }
 }
 
-void cmdline_option_parser_set_long_key( const char* long_key
-                                       , cmdline_option_parser_t* parser
+void cmdline_option_parser_set_long_key( const char*                            long_key
+                                       , cmdline_option_parser_t*               parser
                                        , cmdline_option_parser_parsing_state_t* state
-                                       , cmdline_option_parser_report_t* report )
+                                       , cmdline_option_parser_report_t*        report )
 {
     cmdline_option_vector_iterator_t    option_pos  =   cmdline_option_vector_find( &parser->options
                                                                                   , cmdline_long_key_locator
@@ -749,10 +749,10 @@ static int cmdline_long_key_wth_value_locator(cmdline_option_t* option, void* co
     }
 }
 
-void cmdline_option_parser_set_long_key_wth_value( const char* long_key_wth_value
-                                                 , cmdline_option_parser_t* parser
+void cmdline_option_parser_set_long_key_wth_value( const char*                            long_key_wth_value
+                                                 , cmdline_option_parser_t*               parser
                                                  , cmdline_option_parser_parsing_state_t* state
-                                                 , cmdline_option_parser_report_t* report )
+                                                 , cmdline_option_parser_report_t*        report )
 {
     const char* equal_sign_pos  =   strchr(long_key_wth_value, '=');
 
@@ -795,10 +795,10 @@ void cmdline_option_parser_set_long_key_wth_value( const char* long_key_wth_valu
     cmdline_option_parser_set_value(equal_sign_pos + 1, parser, state, report);
 }
 
-void cmdline_option_parser_set_short_key_complex( const char* short_key_complex
-                                                , cmdline_option_parser_t* parser
+void cmdline_option_parser_set_short_key_complex( const char*                            short_key_complex
+                                                , cmdline_option_parser_t*               parser
                                                 , cmdline_option_parser_parsing_state_t* state
-                                                , cmdline_option_parser_report_t* report )
+                                                , cmdline_option_parser_report_t*        report )
 {
     if (NULL != state->marked_option) {
         report->option_wth_error.short_key  =   state->marked_option->short_key;
@@ -832,11 +832,11 @@ void cmdline_option_parser_set_short_key_complex( const char* short_key_complex
     cmdline_option_parser_set_value(complex_iterator, parser, state, report);
 }
 
-void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
-                                         , int argc
-                                         , char** argv
+void cmdline_option_parser_parse_internal( cmdline_option_parser_t*               parser
+                                         , int                                    argc
+                                         , char**                                 argv
                                          , cmdline_option_parser_parsing_state_t* state
-                                         , cmdline_option_parser_report_t* report )
+                                         , cmdline_option_parser_report_t*        report )
 {
     while ((!cmdline_is_reperesentation_set(&report->option_wth_error)) && (state->arg_index < argc)) {
         const char*         param   =   argv[state->arg_index];
@@ -903,8 +903,8 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t* parser
 }
 
 cmdline_option_parser_report_t cmdline_option_parser_parse( cmdline_option_parser_t* parser
-                                                          , int argc
-                                                          , char** argv )
+                                                          , int                      argc
+                                                          , char**                   argv )
 {
     cmdline_option_parser_report_t  report;
     report.status                       =   cmdline_option_parser_status_ok;
@@ -1039,7 +1039,7 @@ void cmdline_option_key_print( cmdline_option_t* option
 }
 
 void cmdline_option_description_print( cmdline_option_t* option
-                                     , unsigned int desc_max_size )
+                                     , unsigned int      desc_max_size )
 {
     if (NULL != option->desc) {
         fprintf(stderr, "%s", option->desc);
@@ -1223,8 +1223,8 @@ void cmdline_option_repr_to_human(cmdline_option_representation_t repr)
 }
 
 void cmdline_option_parser_report_print( cmdline_option_parser_report_t report
-                                       , int argc
-                                       , char** argv)
+                                       , int                            argc
+                                       , char**                         argv )
 {
     const char* translation =   cmdline_option_parser_status_to_human(report.status);
     fprintf(stderr, "%s", translation);
