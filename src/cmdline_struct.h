@@ -22,7 +22,48 @@ typedef struct cmdline_option_parser_iface_s {
     void (*full_parse) (void* self, int argc, char** argv);
     void (*report) (cmdline_option_parser_report_t report, int argc, char** argv);
 
+    cmdline_is_option_add_e (*add_option) (void* self, cmdline_option_t* option);
+    void (*add_opt) ( void*             self
+                    , char              short_key
+                    , const char*       long_key
+                    , const char*       desc
+                    , void*             value
+                    , const char*       default_value
+                    , cmdline_cast_arg  caster
+                    , int               required );
+
+    void (*add_flag) ( void*       self
+                     , char        short_key
+                     , const char* long_key
+                     , const char* desc
+                     , int*        value );
+
+    void (*add_int) ( void*       self
+                    , char        short_key
+                    , const char* long_key
+                    , const char* desc
+                    , long int*   value
+                    , const char* default_value
+                    , int         required );
+
+    void (*add_str) ( void*        self
+                    , char         short_key
+                    , const char*  long_key
+                    , const char*  desc
+                    , const char** value
+                    , const char*  default_value
+                    , int          required );
+
+    void (*add_double) ( void*       self
+                       , char        short_key
+                       , const char* long_key
+                       , const char* desc
+                       , double*     value
+                       , const char* default_value
+                       , int         required );
+
     void (*destruct) (void* self);
+
 } cmdline_option_parser_iface_t;
 
 
