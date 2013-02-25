@@ -104,13 +104,13 @@ void cmdline_add_internal( cmdline_option_parser_t* parser
 }
 
 void cmdline_opt( cmdline_option_parser_t* parser
-                , char              short_key
-                , const char*       long_key
-                , const char*       desc
-                , void*             value
-                , const char*       default_value
-                , cmdline_cast_arg  caster
-                , int               required )
+                , char                     short_key
+                , const char*              long_key
+                , const char*              desc
+                , void*                    value
+                , const char*              default_value
+                , cmdline_cast_arg         caster
+                , int                      required )
 {
     cmdline_option_t*   option  =   cmdline_option_create( short_key
                                                          , long_key
@@ -124,10 +124,10 @@ void cmdline_opt( cmdline_option_parser_t* parser
 }
 
 void cmdline_flag( cmdline_option_parser_t* parser
-                 , char        short_key
-                 , const char* long_key
-                 , const char* desc
-                 , int*        value )
+                 , char                     short_key
+                 , const char*              long_key
+                 , const char*              desc
+                 , int*                     value )
 {
 
     cmdline_option_t*   option  =   cmdline_flag_create( short_key
@@ -147,12 +147,12 @@ void cmdline_help(cmdline_option_parser_t* parser, char short_key)
 }
 
 void cmdline_int( cmdline_option_parser_t* parser
-                , char              short_key
-                , const char*       long_key
-                , const char*       desc
-                , long int*         value
-                , const char*       default_value
-                , int               required )
+                , char                     short_key
+                , const char*              long_key
+                , const char*              desc
+                , long int*                value
+                , const char*              default_value
+                , int                      required )
 {
     cmdline_opt( parser
                , short_key
@@ -165,12 +165,12 @@ void cmdline_int( cmdline_option_parser_t* parser
 }
 
 void cmdline_double( cmdline_option_parser_t* parser
-                   , char              short_key
-                   , const char*       long_key
-                   , const char*       desc
-                   , double*           value
-                   , const char*       default_value
-                   , int               required )
+                   , char                     short_key
+                   , const char*              long_key
+                   , const char*              desc
+                   , double*                  value
+                   , const char*              default_value
+                   , int                      required )
 {
     cmdline_opt( parser
                , short_key
@@ -182,12 +182,12 @@ void cmdline_double( cmdline_option_parser_t* parser
                , required );
 }
 void cmdline_str( cmdline_option_parser_t* parser
-                , char              short_key
-                , const char*       long_key
-                , const char*       desc
-                , const char**      value
-                , const char*       default_value
-                , int               required )
+                , char                     short_key
+                , const char*              long_key
+                , const char*              desc
+                , const char**             value
+                , const char*              default_value
+                , int                      required )
 {
     cmdline_opt( parser
                , short_key
