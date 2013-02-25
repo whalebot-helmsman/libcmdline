@@ -40,18 +40,11 @@ int cmdline_option_validate_long_key(const char* long_key)
         return 0;
     }
 
-    int idx     =   0;
-    int is_ok   =   1;
-    while ((1 == is_ok) && (idx != length)) {
-        if (' ' == long_key[idx]) {
-            is_ok   =   0;
-        }
-        else {
-            idx +=  1;
-        }
+    if (NULL != strchr(long_key, ' ')) {
+        return 0;
     }
 
-    return is_ok;
+    return 1;
 }
 static cmdline_option_t* cmdline_option_create_internal( char              short_key
                                                        , const char*       long_key
