@@ -214,5 +214,9 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->add_str                      =   cmdline_option_parser_iface_add_str;
     iface->add_double                   =   cmdline_option_parser_iface_add_double;
 
+    iface->REQUIRED     =   cmdline_option_required;
+    iface->NOT_REQUIRED =   cmdline_option_not_required;
+    iface->FORBIDDEN    =   cmdline_option_forbiddien;
+
     return iface;
 }
