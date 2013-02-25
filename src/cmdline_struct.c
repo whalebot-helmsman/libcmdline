@@ -1,4 +1,5 @@
 #include "cmdline_struct.h"
+#include "cmdline_utils.h"
 
 #include <stdlib.h>
 
@@ -39,6 +40,12 @@ cmdline_option_parser_free_params_iterator_t cmdline_option_parser_iface_free_pa
     return cmdline_option_parser_free_params_end(self_typed->base);
 }
 
+void cmdline_option_parser_iface_add_help_flag(void* self, char short_key)
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    cmdline_help(self_typed->base, short_key);
+}
+
 cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
 {
     cmdline_option_parser_iface_t*  iface  =   malloc(sizeof(cmdline_option_parser_iface_t));
@@ -55,6 +62,7 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->set_free_params_requirement  =   cmdline_option_parser_iface_set_free_params_requiremnt;
     iface->free_params_end              =   cmdline_option_parser_iface_free_params_end;
     iface->free_params_begin            =   cmdline_option_parser_iface_free_params_begin;
+    iface->add_help_flag                =   cmdline_option_parser_iface_add_help_flag;
 
     return iface;
 }
