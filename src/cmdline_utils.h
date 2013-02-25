@@ -1,5 +1,10 @@
 #pragma once
 #include "cmdline.h"
+/*
+ *
+ * WARNING:This interface is deprecated, please use struct from cmdline_struct.h
+ *
+ */
 
 #ifdef __cplusplus
 extern "C" {
