@@ -12,13 +12,13 @@ int main(int argc, char** argv)
     cmdline_option_parser_iface_t*  parser  =   cmdline_option_parser_iface_construct();
     parser->set_program_description(parser, "program to demonstrate abilities of libcmdline library");
     parser->set_free_params_description(parser, "why you need free params");
-    parser->set_free_params_requirement(parser, REQ);
+    parser->set_free_params_requirement(parser, parser->REQUIRED);
 
     parser->add_help_flag(parser, 'h');
 
     parser->add_flag(parser, 'f', "flag"  , "flag symbolizes something binary", &flag);
-    parser->add_int(parser,  'I', NULL    , "something you can count"         , &i   , "0" , NOT_REQ);
-    parser->add_str(parser,  's', "string", "something looks like human word" , &str , NULL, REQ);
+    parser->add_int(parser,  'I', NULL    , "something you can count"         , &i   , "0" , parser->NOT_REQUIRED);
+    parser->add_str(parser,  's', "string", "something looks like human word" , &str , NULL, parser->REQUIRED);
 
     parser->full_parse(parser, argc, argv);
 
