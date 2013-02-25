@@ -14,7 +14,8 @@ int main(int argc, char** argv)
     parser->set_free_params_description(parser, "why you need free params");
     parser->set_free_params_requirement(parser, REQ);
 
-    cmdline_help(parser->base, 'h');
+    parser->add_help_flag(parser, 'h');
+
     cmdline_flag(parser->base, 'f', "flag"  , "flag symbolizes something binary", &flag);
     cmdline_int (parser->base, 'I', NULL    , "something you can count"         , &i   , "0" , NOT_REQ);
     cmdline_str (parser->base, 's', "string", "something looks like human word" , &str , NULL, REQ);
