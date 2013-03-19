@@ -555,3 +555,31 @@ TEST(ParserTest, you_cannot_pass_option_not_in_enum)
     cmdline_option_parser_destroy(parser);
 }
 
+TEST(ParserTest, you_can_pass_escaping_dash_as_parameter)
+{
+    cmdline_option_parser_t*    parser      =   cmdline_option_parser_create();
+    const char*                 value       =   NULL;
+    cmdline_str(parser, 'b', "aa", "aa desc", &value, NULL, NOT_REQ);
+    char*   argv[]  =   {"some_command", "-b", "/"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_STREQ("/", value);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_can_pass_double_escaping_dash_and_minus_as_parameter)
+{
+    cmdline_option_parser_t*    parser      =   cmdline_option_parser_create();
+    const char*                 value       =   NULL;
+    cmdline_str(parser, 'b', "aa", "aa desc", &value, NULL, NOT_REQ);
+    char*   argv[]  =   {"some_command", "-b", "//-"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_STREQ("/-", value);
+    cmdline_option_parser_destroy(parser);
+}
+
