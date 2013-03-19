@@ -584,6 +584,7 @@ static const char* remove_dash_escaping(const char* value)
     }
 
     const char* value_iter   =   value + 1;
+
     while ((*value_iter) && (*value_iter == '/')) {
         value_iter  +=  1;
     }
@@ -1006,7 +1007,7 @@ unsigned int cmdline_option_description_size(cmdline_option_t* option)
 }
 
 void cmdline_option_key_print( cmdline_option_t* option
-                             , unsigned int keys_max_size )
+                             , unsigned int      keys_max_size )
 {
     fprintf(stderr, "\t");
     if ('\0' != option->short_key) {
