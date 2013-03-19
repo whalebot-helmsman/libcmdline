@@ -8,6 +8,7 @@ int main(int argc, char** argv)
     int         flag;
     long int    i;
     const char* str;
+    int         enumerated;
 
     typedef enum something_enumerated_s {
         zero = 0,
@@ -28,24 +29,27 @@ int main(int argc, char** argv)
     parser->add_str(parser,  's', "string", "something looks like human word" , &str , NULL, parser->REQUIRED);
 
 
-    int                             target      =   0;
     cmdline_enum_mapper_cell_t      cells[]     =   { {"zero",   zero}
                                                     , {"one",    one}
                                                     , {"two",    two}
                                                     , { "three", three} };
     cmdline_enum_mapper_t           mapper      =   { cells
                                                     , sizeof(cells)/sizeof(cells[0])
-                                                    , &target };
-    parser->add_raw_enum(parser,  'e', "enum", "something enumerated" , &mapper , NULL, parser->REQUIRED);
+                                                    , &enumerated };
+    parser->add_raw_enum(parser,  'e', "enum", "something enumerated" , &mapper , "zero", parser->NOT_REQUIRED);
 
     parser->full_parse(parser, argc, argv);
 
+    fprintf(stdout, "flag              =   %d\n", flag);
+    fprintf(stdout, "i                 =   %ld\n", i);
+    fprintf(stdout, "str               =   %s\n", str);
+    fprintf(stdout, "enumerated        =   %d\n", enumerated);
     cmdline_option_parser_free_params_iterator_t    iter    =   parser->free_params_begin(parser);
     cmdline_option_parser_free_params_iterator_t    end     =   parser->free_params_end(parser);
     int                                             number  =   0;
 
     while (iter != end) {
-        fprintf(stdout, "%d: %s\n", number, *iter);
+        fprintf(stdout, "free_params[%d]    =   %s\n", number, *iter);
         iter    +=  1;
         number  +=  1;
     }
