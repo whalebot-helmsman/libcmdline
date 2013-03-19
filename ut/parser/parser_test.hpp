@@ -516,3 +516,42 @@ TEST(ParserTest, you_can_pass_free_options_when_they_are_required)
     cmdline_option_parser_destroy(parser);
 }
 
+TEST(ParserTest, you_can_pass_enum_option)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    int                             target      =   0;
+    cmdline_enum_mapper_cell_t      cells[]     =   { {"one",    1}
+                                                    , {"two",    2}
+                                                    , { "three", 3} };
+    cmdline_enum_mapper_t           mapper      =   { cells
+                                                    , sizeof(cells)/sizeof(cells[0])
+                                                    , &target };
+    cmdline_enum(parser, 'b', "aa", "aa desc", &mapper, NULL, NOT_REQ);
+    char*   argv[]  =   {"some_command", "-b", "two"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_EQ(2, target);
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_cannot_pass_option_not_in_enum)
+{
+    cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
+    int                             target      =   0;
+    cmdline_enum_mapper_cell_t      cells[]     =   { {"one",    1}
+                                                    , {"two",    2}
+                                                    , { "three", 3} };
+    cmdline_enum_mapper_t           mapper      =   { cells
+                                                    , sizeof(cells)/sizeof(cells[0])
+                                                    , &target };
+    cmdline_enum(parser, 'b', "aa", "aa desc", &mapper, NULL, NOT_REQ);
+    char*   argv[]  =   {"some_command", "-b", "four"};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_wrong_value, report.status);
+    cmdline_option_parser_destroy(parser);
+}
+

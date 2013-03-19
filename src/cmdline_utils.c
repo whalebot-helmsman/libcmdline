@@ -1,6 +1,33 @@
 #include "cmdline_utils.h"
+#include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
+
+cmdline_cast_arg_result_e cmdline_cast_enum_arg( const char* cast_from
+                                               , void*       cast_to )
+{
+    cmdline_enum_mapper_t*  mapper  =   (cmdline_enum_mapper_t*)cast_to;
+    int                     is_find =   0;
+    int                     iter    =   0;
+
+    while ((0 == is_find) && (mapper->cells_size > iter)) {
+        cmdline_enum_mapper_cell_t* current_cell    =   &mapper->cells_start[iter];
+        if (0 == strcmp(cast_from, current_cell->from)) {
+            is_find =   1;
+            continue;
+        }
+        iter    +=  1;
+    }
+
+    if (0 == is_find) {
+        return cmdline_cast_arg_failure;
+    }
+
+    cmdline_enum_mapper_cell_t* find_cell   =   &mapper->cells_start[iter];
+    *mapper->cast_to    =   find_cell->to;
+
+    return cmdline_cast_arg_success;
+}
 
 cmdline_cast_arg_result_e cmdline_cast_int_arg( const char* cast_from
                                               , void*       cast_to )
@@ -196,6 +223,24 @@ void cmdline_str( cmdline_option_parser_t* parser
                , value
                , default_value
                , cmdline_cast_string_arg
+               , required );
+}
+
+void cmdline_enum( cmdline_option_parser_t* parser
+                 , char                     short_key
+                 , const char*              long_key
+                 , const char*              desc
+                 , cmdline_enum_mapper_t*   mapper
+                 , const char*              default_value
+                 , int                      required )
+{
+    cmdline_opt( parser
+               , short_key
+               , long_key
+               , desc
+               , mapper
+               , default_value
+               , cmdline_cast_enum_arg
                , required );
 }
 

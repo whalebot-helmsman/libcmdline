@@ -1,5 +1,6 @@
 #pragma once
 #include "cmdline.h"
+#include "cmdline_utils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,6 +62,14 @@ typedef struct cmdline_option_parser_iface_s {
                        , double*     value
                        , const char* default_value
                        , int         required );
+
+    void (*add_raw_enum) ( void*                  self
+                         , char                   short_key
+                         , const char*            long_key
+                         , const char*            desc
+                         , cmdline_enum_mapper_t* mapper
+                         , const char*            default_value
+                         , int                    required );
 
     cmdline_is_option_required_e    REQUIRED;
     cmdline_is_option_required_e    NOT_REQUIRED;
