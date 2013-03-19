@@ -1,5 +1,4 @@
 #include "cmdline_struct.h"
-#include "cmdline_utils.h"
 
 #include <stdlib.h>
 
@@ -185,6 +184,24 @@ void cmdline_option_parser_iface_add_double( void*       self
                        , cmdline_cast_double_arg
                        , required );
 }
+void cmdline_option_parser_iface_add_raw_enum( void*                  self
+                                             , char                   short_key
+                                             , const char*            long_key
+                                             , const char*            desc
+                                             , cmdline_enum_mapper_t* mapper
+                                             , const char*            default_value
+                                             , int                    required )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    self_typed->add_opt( self
+                       , short_key
+                       , long_key
+                       , desc
+                       , mapper
+                       , default_value
+                       , cmdline_cast_enum_arg
+                       , required );
+}
 
 cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
 {
@@ -213,6 +230,7 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->add_flag                     =   cmdline_option_parser_iface_add_flag;
     iface->add_str                      =   cmdline_option_parser_iface_add_str;
     iface->add_double                   =   cmdline_option_parser_iface_add_double;
+    iface->add_raw_enum                 =   cmdline_option_parser_iface_add_raw_enum;
 
     iface->REQUIRED     =   cmdline_option_required;
     iface->NOT_REQUIRED =   cmdline_option_not_required;

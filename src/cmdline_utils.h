@@ -51,6 +51,24 @@ void cmdline_double( cmdline_option_parser_t* parser
                    , const char*              default_value
                    , int                      required );
 
+typedef struct cmdline_enum_mapper_cell_s {
+    const char* from;
+    int         to;
+} cmdline_enum_mapper_cell_t;
+
+typedef struct cmdline_enum_mapper_s {
+    cmdline_enum_mapper_cell_t* cells_start;
+    int                         cells_size;
+    int*                        cast_to;
+} cmdline_enum_mapper_t;
+
+void cmdline_enum( cmdline_option_parser_t* parser
+                 , char                     short_key
+                 , const char*              long_key
+                 , const char*              desc
+                 , cmdline_enum_mapper_t*   mapper
+                 , const char*              default_value
+                 , int                      required );
 
 cmdline_cast_arg_result_e cmdline_cast_int_arg( const char* cast_from
                                               , void*       cast_to );
@@ -58,6 +76,8 @@ cmdline_cast_arg_result_e cmdline_cast_double_arg( const char* cast_from
                                                  , void*       cast_to );
 cmdline_cast_arg_result_e cmdline_cast_string_arg( const char* cast_from
                                                  , void*       cast_to );
+cmdline_cast_arg_result_e cmdline_cast_enum_arg( const char* cast_from
+                                               , void*       cast_to );
 #define NOT_REQ cmdline_option_not_required
 #define REQ cmdline_option_required
 
