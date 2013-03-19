@@ -1235,7 +1235,7 @@ void cmdline_option_parser_report_print( cmdline_option_parser_report_t report
         for (i = 0; i != argc; ++i) {
             const char* template    =   " %s";
             if (i == report.argument_index) {
-                template    =   " __%s__";
+                template    =   " \033[1;31m%s\033[0m";
             }
             fprintf(stderr, template, argv[i]);
         }
