@@ -842,7 +842,14 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t*             
     while ((!cmdline_is_reperesentation_set(&report->option_wth_error)) && (state->arg_index < argc)) {
         const char*         param   =   argv[state->arg_index];
         int                 length  =   strlen(param);
-        cmdline_arg_type_e  type    =   cmdline_option_parser_classify_arg(param, length);
+        cmdline_arg_type_e  type    =   cmdline_arg_type_error;
+
+        if (NULL != state->marked_option) {
+            type    =   cmdline_arg_type_value;
+        } else {
+
+            type    =   cmdline_option_parser_classify_arg(param, length);
+        }
 
         if (cmdline_arg_type_error == type) {
             report->argument_index              =   state->arg_index;
