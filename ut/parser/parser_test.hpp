@@ -468,7 +468,7 @@ TEST(ParserTest, you_can_use_params_with_dash_in_start)
     cmdline_option_parser_destroy(parser);
 }
 
-TEST(ParserTest, you_cannot_use_wrong_negative_value_format)
+TEST(ParserTest, you_can_use_non_dash_terminated_negative_as_value_for_option)
 {
     cmdline_option_parser_t*        parser      =   cmdline_option_parser_create();
     long int                        tester      =   1;
@@ -477,7 +477,7 @@ TEST(ParserTest, you_cannot_use_wrong_negative_value_format)
     int     argc    =   sizeof(argv)/sizeof(argv[0]);
 
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
-    EXPECT_EQ(cmdline_option_parser_status_no_arg, report.status);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
 }
 
 TEST(ParserTest, you_cannot_pass_free_options_when_they_are_forbidden)
