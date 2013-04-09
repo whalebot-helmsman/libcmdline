@@ -90,26 +90,25 @@ struct cmdline_option_s {
    int                  required;
 };
 
-//TODO:rewrite to cmdline_bool_e
-int cmdline_option_validate_long_key(const cmdline_buffer_t* long_key)
+cmdline_bool_e cmdline_option_is_long_key_valid(const cmdline_buffer_t* long_key)
 {
     if (cmdline_bool_true == cmdline_buffer_is_empty(long_key)) {
-        return 1;
+        return cmdline_bool_true;
     }
 
     if ('-' == long_key->buffer[0]) {
-        return 0;
+        return cmdline_bool_false;
     }
 
     if (NULL != memchr(long_key->buffer, '=', long_key->size)) {
-        return 0;
+        return cmdline_bool_false;
     }
 
     if (NULL != memchr(long_key->buffer, ' ', long_key->size)) {
-        return 0;
+        return cmdline_bool_false;
     }
 
-    return 1;
+    return cmdline_bool_true;
 }
 static cmdline_option_t* cmdline_option_create_internal( char                    short_key
                                                        , const cmdline_buffer_t* long_key
@@ -128,7 +127,7 @@ static cmdline_option_t* cmdline_option_create_internal( char                   
         return NULL;
     }
 
-    if (0 == cmdline_option_validate_long_key(long_key)) {
+    if (cmdline_bool_false == cmdline_option_is_long_key_valid(long_key)) {
         return NULL;
     }
 
