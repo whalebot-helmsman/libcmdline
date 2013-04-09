@@ -110,6 +110,7 @@ TEST(OptionsTest, you_cannot_create_option_long_key_starting_from_dash)
                                                 , NULL
                                                 , cmdline_option_not_required ));
 }
+
 TEST(OptionsTest, you_cannot_create_option_long_key_with_equal_sign)
 {
     cmdline_option_t*   not_created =   NULL;
@@ -122,3 +123,112 @@ TEST(OptionsTest, you_cannot_create_option_long_key_with_equal_sign)
                                                 , NULL
                                                 , cmdline_option_not_required ));
 }
+
+TEST(OptionsTest, you_can_create_option_with_only_short_key_use_easy_format)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "a"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_NE(not_created, create_try);
+    cmdline_option_destroy(create_try);
+}
+
+TEST(OptionsTest, you_can_create_option_with_only_long_key_use_easy_format)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "aaaaaa"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_NE(not_created, create_try);
+    cmdline_option_destroy(create_try);
+}
+
+TEST(OptionsTest, you_can_create_option_with_mixed_key_use_easy_format)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "a,aaaaa"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_NE(not_created, create_try);
+    cmdline_option_destroy(create_try);
+}
+
+TEST(OptionsTest, you_can_create_option_with_mixed_key_use_easy_format_at_end)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "aaaaa,a"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_NE(not_created, create_try);
+    cmdline_option_destroy(create_try);
+}
+
+TEST(OptionsTest, you_cannot_create_option_with_mixed_key_use_easy_format_wrong)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "aa,aaaaa"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_EQ(not_created, create_try);
+}
+
+TEST(OptionsTest, you_cannot_create_option_with_mixed_key_use_easy_format_wrong_1)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( ",aaaaa"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_EQ(not_created, create_try);
+}
+
+TEST(OptionsTest, you_cannot_create_option_with_mixed_key_use_easy_format_wrong_2)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "aaaaa,"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_EQ(not_created, create_try);
+}
+
+TEST(OptionsTest, you_cannot_create_option_with_mixed_key_use_easy_format_wth_equal_short_and_long_keys)
+{
+    cmdline_option_t*   not_created =   NULL;
+    int                 flag;
+    cmdline_option_t*   create_try  =   cmdline_option_create_easy_format( "a,a"
+                                                                         , NULL
+                                                                         , &flag
+                                                                         , dumb_caster
+                                                                         , NULL
+                                                                         , cmdline_option_not_required );
+    EXPECT_EQ(not_created, create_try);
+}
+

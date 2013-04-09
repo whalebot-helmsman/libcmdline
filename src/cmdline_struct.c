@@ -97,40 +97,35 @@ void cmdline_option_parser_iface_add_option_full_internal( void*             sel
 }
 
 void cmdline_option_parser_iface_add_opt( void*             self
-                                        , char              short_key
-                                        , const char*       long_key
+                                        , const char*       easy_format
                                         , const char*       desc
                                         , void*             value
                                         , const char*       default_value
                                         , cmdline_cast_arg  caster
                                         , int               required )
 {
-    cmdline_option_t*   option      =   cmdline_option_create( short_key
-                                                             , long_key
-                                                             , desc
-                                                             , value
-                                                             , caster
-                                                             , default_value
-                                                             , required );
+    cmdline_option_t*   option      =   cmdline_option_create_easy_format( easy_format
+                                                                         , desc
+                                                                         , value
+                                                                         , caster
+                                                                         , default_value
+                                                                         , required );
     cmdline_option_parser_iface_add_option_full_internal(self, option);
 }
 
 void cmdline_option_parser_iface_add_flag( void*       self
-                                         , char        short_key
-                                         , const char* long_key
+                                         , const char* easy_format
                                          , const char* desc
                                          , int*        value )
 {
-    cmdline_option_t*   option  =   cmdline_flag_create( short_key
-                                                       , long_key
-                                                       , desc
-                                                       , value );
+    cmdline_option_t*   option  =   cmdline_flag_create_easy_format( easy_format
+                                                                   , desc
+                                                                   , value );
     cmdline_option_parser_iface_add_option_full_internal(self, option);
 }
 
 void cmdline_option_parser_iface_add_int( void*       self
-                                        , char        short_key
-                                        , const char* long_key
+                                        , const char* easy_format
                                         , const char* desc
                                         , long int*   value
                                         , const char* default_value
@@ -138,8 +133,7 @@ void cmdline_option_parser_iface_add_int( void*       self
 {
     cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
     self_typed->add_opt( self
-                       , short_key
-                       , long_key
+                       , easy_format
                        , desc
                        , value
                        , default_value
@@ -148,8 +142,7 @@ void cmdline_option_parser_iface_add_int( void*       self
 }
 
 void cmdline_option_parser_iface_add_str( void*        self
-                                        , char         short_key
-                                        , const char*  long_key
+                                        , const char*  easy_format
                                         , const char*  desc
                                         , const char** value
                                         , const char*  default_value
@@ -157,8 +150,7 @@ void cmdline_option_parser_iface_add_str( void*        self
 {
     cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
     self_typed->add_opt( self
-                       , short_key
-                       , long_key
+                       , easy_format
                        , desc
                        , value
                        , default_value
@@ -167,8 +159,7 @@ void cmdline_option_parser_iface_add_str( void*        self
 }
 
 void cmdline_option_parser_iface_add_double( void*       self
-                                           , char        short_key
-                                           , const char* long_key
+                                           , const char* easy_format
                                            , const char* desc
                                            , double*     value
                                            , const char* default_value
@@ -176,8 +167,7 @@ void cmdline_option_parser_iface_add_double( void*       self
 {
     cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
     self_typed->add_opt( self
-                       , short_key
-                       , long_key
+                       , easy_format
                        , desc
                        , value
                        , default_value
@@ -185,8 +175,7 @@ void cmdline_option_parser_iface_add_double( void*       self
                        , required );
 }
 void cmdline_option_parser_iface_add_raw_enum( void*                  self
-                                             , char                   short_key
-                                             , const char*            long_key
+                                             , const char*            easy_format
                                              , const char*            desc
                                              , cmdline_enum_mapper_t* mapper
                                              , const char*            default_value
@@ -194,8 +183,7 @@ void cmdline_option_parser_iface_add_raw_enum( void*                  self
 {
     cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
     self_typed->add_opt( self
-                       , short_key
-                       , long_key
+                       , easy_format
                        , desc
                        , mapper
                        , default_value

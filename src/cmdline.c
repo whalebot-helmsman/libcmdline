@@ -20,7 +20,13 @@ typedef enum cmdline_bool_s {
     cmdline_bool_true
 } cmdline_bool_e;
 
-cmdline_bool_e cmdline_buffer_is_empty(cmdline_buffer_t* buffer)
+void cmdline_buffer_clear(cmdline_buffer_t* buffer)
+{
+    buffer->buffer  =   NULL;
+    buffer->size    =   0;
+}
+
+cmdline_bool_e cmdline_buffer_is_empty(const cmdline_buffer_t* buffer)
 {
     unsigned int    ret =   cmdline_bool_false;
     if ((NULL == buffer->buffer) || (0 == buffer->size)) {
@@ -37,6 +43,12 @@ void cmdline_buffer_from_cstring(cmdline_buffer_t* buffer, const char* cstring)
     if (NULL != buffer->buffer) {
         buffer->size    =   strlen(buffer->buffer);
     }
+}
+
+void cmdline_buffer_copy(cmdline_buffer_t* to, const cmdline_buffer_t* from)
+{
+    to->buffer  =   from->buffer;
+    to->size    =   from->size;
 }
 
 cmdline_bool_e cmdline_buffer_is_equal(cmdline_buffer_t* l, cmdline_buffer_t* r)
@@ -78,45 +90,41 @@ struct cmdline_option_s {
    int                  required;
 };
 
-int cmdline_option_validate_long_key(const char* long_key)
+//TODO:rewrite to cmdline_bool_e
+int cmdline_option_validate_long_key(const cmdline_buffer_t* long_key)
 {
-    if (NULL == long_key) {
+    if (cmdline_bool_true == cmdline_buffer_is_empty(long_key)) {
         return 1;
     }
 
-    int length  =   strlen(long_key);
-    if (0 == length) {
+    if ('-' == long_key->buffer[0]) {
         return 0;
     }
 
-    if ('-' == long_key[0]) {
+    if (NULL != memchr(long_key->buffer, '=', long_key->size)) {
         return 0;
     }
 
-    if (NULL != strchr(long_key, '=')) {
-        return 0;
-    }
-
-    if (NULL != strchr(long_key, ' ')) {
+    if (NULL != memchr(long_key->buffer, ' ', long_key->size)) {
         return 0;
     }
 
     return 1;
 }
-static cmdline_option_t* cmdline_option_create_internal( char              short_key
-                                                       , const char*       long_key
-                                                       , const char*       desc
-                                                       , void*             value
-                                                       , cmdline_cast_arg  caster
-                                                       , const char*       default_value
-                                                       , int               is_use_param
-                                                       , int               required )
+static cmdline_option_t* cmdline_option_create_internal( char                    short_key
+                                                       , const cmdline_buffer_t* long_key
+                                                       , const char*             desc
+                                                       , void*                   value
+                                                       , cmdline_cast_arg        caster
+                                                       , const char*             default_value
+                                                       , int                     is_use_param
+                                                       , int                     required )
 {
     if (cmdline_option_forbiddien == required) {
         return NULL;
     }
 
-    if (('\0' == short_key) && (NULL == long_key)) {
+    if (('\0' == short_key) && (cmdline_bool_true == cmdline_buffer_is_empty(long_key))) {
         return NULL;
     }
 
@@ -139,7 +147,7 @@ static cmdline_option_t* cmdline_option_create_internal( char              short
     }
 
     ret->short_key      =   short_key;
-    cmdline_buffer_from_cstring(&ret->long_key, long_key);
+    cmdline_buffer_copy(&ret->long_key, long_key);
     ret->desc           =   desc;
     ret->value          =   value;
     ret->caster         =   caster;
@@ -162,8 +170,11 @@ cmdline_option_t* cmdline_option_create( char              short_key
         return NULL;
     }
 
+    cmdline_buffer_t    long_key_buffer;
+    cmdline_buffer_from_cstring(&long_key_buffer, long_key);
+
     return cmdline_option_create_internal( short_key
-                                         , long_key
+                                         , &long_key_buffer
                                          , desc
                                          , value
                                          , caster
@@ -172,14 +183,122 @@ cmdline_option_t* cmdline_option_create( char              short_key
                                          , required );
 }
 
-
 cmdline_option_t* cmdline_flag_create( char        short_key
                                      , const char* long_key
                                      , const char* desc
                                      , int*        flag )
 {
+    cmdline_buffer_t    long_key_buffer;
+    cmdline_buffer_from_cstring(&long_key_buffer, long_key);
+
     return cmdline_option_create_internal( short_key
-                                         , long_key
+                                         , &long_key_buffer
+                                         , desc
+                                         , (void*)flag
+                                         , NULL
+                                         , NULL
+                                         , cmdline_do_not_use_param
+                                         , cmdline_option_not_required );
+}
+
+cmdline_bool_e cmdline_parse_easy_format( const char*       formated
+                                        , cmdline_buffer_t* long_key
+                                        , char*             short_key )
+{
+    if (NULL == formated) {
+        return cmdline_bool_false;
+    }
+
+    unsigned int    length  =   strlen(formated);
+    if (0 == length) {
+        return cmdline_bool_false;
+    }
+
+    if (1 == length) {
+        cmdline_buffer_clear(long_key);
+        *short_key  =   formated[0];
+        return cmdline_bool_true;
+    }
+
+    const char* delimiter_pos   =   memchr(formated, ',', length);
+
+    if (NULL == delimiter_pos) {
+        cmdline_buffer_from_cstring(long_key, formated);
+        *short_key  =   '\0';
+        return cmdline_bool_true;
+    }
+
+    int to_start    =   delimiter_pos - formated;
+    int to_end      =   formated + length - delimiter_pos;
+
+    // ",aaa" or "aaa,"
+    if ((0 == to_start) || (1 == to_end)) {
+        return cmdline_bool_false;
+    }
+
+    //"a,a"
+    if((1 == to_start) && (2 == to_end)) {
+        return cmdline_bool_false;
+    }
+
+    if (1 == to_start) {
+        *short_key          =   formated[0];
+        long_key->buffer    =   delimiter_pos + 1;
+        long_key->size      =   to_end;
+        return cmdline_bool_true;
+    }
+
+    if (2 == to_end) {
+        *short_key          =   delimiter_pos[1];
+        long_key->buffer    =   formated;
+        long_key->size      =   to_start;
+        return cmdline_bool_true;
+    }
+
+    return cmdline_bool_false;
+}
+
+cmdline_option_t* cmdline_option_create_easy_format( const char*       short_and_long_key_united
+                                                   , const char*       desc
+                                                   , void*             value
+                                                   , cmdline_cast_arg  caster
+                                                   , const char*       default_value
+                                                   , int               required )
+{
+    cmdline_buffer_t    long_key;
+    char                short_key;
+    cmdline_bool_e      result  =   cmdline_parse_easy_format( short_and_long_key_united
+                                                             , &long_key
+                                                             , &short_key );
+    if (cmdline_bool_false == result) {
+        return NULL;
+    }
+
+    return cmdline_option_create_internal( short_key
+                                         , &long_key
+                                         , desc
+                                         , value
+                                         , caster
+                                         , default_value
+                                         , cmdline_use_param
+                                         , required );
+}
+
+cmdline_option_t* cmdline_flag_create_easy_format( const char* short_and_long_key_united
+                                                 , const char* desc
+                                                 , int*        flag )
+{
+    cmdline_buffer_t    long_key;
+    char                short_key;
+    cmdline_bool_e      result  =   cmdline_parse_easy_format( short_and_long_key_united
+                                                             , &long_key
+                                                             , &short_key );
+    if (cmdline_bool_false == result) {
+        return NULL;
+    }
+
+    return cmdline_option_create_internal( short_key
+                                         , &long_key
                                          , desc
                                          , (void*)flag
                                          , NULL
