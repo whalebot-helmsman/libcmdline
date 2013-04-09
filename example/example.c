@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 
     parser->add_help_flag(parser, 'h');
 
-    parser->add_flag(parser, "flag,f"  , "flag symbolizes something binary", &flag);
+    parser->add_flag(parser, "f,flag"  , "flag symbolizes something binary", &flag);
     parser->add_int(parser,  "I"       , "something you can count"         , &i   , "0" , parser->NOT_REQUIRED);
     parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL, parser->REQUIRED);
 
