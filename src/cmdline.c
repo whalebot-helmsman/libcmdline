@@ -10,9 +10,66 @@ typedef enum cmdline_is_use_param_s {
 } cmdline_is_use_param_e;
 
 
+typedef struct cmdline_buffer_s {
+    const char*     buffer;
+    unsigned int    size;
+} cmdline_buffer_t;
+
+typedef enum cmdline_bool_s {
+    cmdline_bool_false = 0,
+    cmdline_bool_true
+} cmdline_bool_e;
+
+cmdline_bool_e cmdline_buffer_is_empty(cmdline_buffer_t* buffer)
+{
+    unsigned int    ret =   cmdline_bool_false;
+    if ((NULL == buffer->buffer) || (0 == buffer->size)) {
+        ret =   cmdline_bool_true;
+    }
+    return ret;
+}
+
+void cmdline_buffer_from_cstring(cmdline_buffer_t* buffer, const char* cstring)
+{
+    buffer->buffer  =   cstring;
+    buffer->size    =   0;
+
+    if (NULL != buffer->buffer) {
+        buffer->size    =   strlen(buffer->buffer);
+    }
+}
+
+cmdline_bool_e cmdline_buffer_is_equal(cmdline_buffer_t* l, cmdline_buffer_t* r)
+{
+    if (l->size != r->size) {
+        return cmdline_bool_false;
+    }
+
+    if (0 == l->size) {
+        return cmdline_bool_true;
+    }
+
+    if ((NULL == l->buffer) && (NULL == r->buffer)) {
+        return cmdline_bool_true;
+    }
+
+    if ((NULL == l->buffer) || (NULL == r->buffer)) {
+        return cmdline_bool_false;
+    }
+
+    cmdline_bool_e  ret =   cmdline_bool_false;
+    if (0 == strncmp(l->buffer, r->buffer, l->size)) {
+        ret =   cmdline_bool_true;
+    }
+
+    return ret;
+}
+
+
+
 struct cmdline_option_s {
    char                 short_key;
-   const char*          long_key;
+   cmdline_buffer_t     long_key;
    const char*          desc;
    void*                value;
    cmdline_cast_arg     caster;
@@ -82,7 +139,7 @@ static cmdline_option_t* cmdline_option_create_internal( char              short
     }
 
     ret->short_key      =   short_key;
-    ret->long_key       =   long_key;
+    cmdline_buffer_from_cstring(&ret->long_key, long_key);
     ret->desc           =   desc;
     ret->value          =   value;
     ret->caster         =   caster;
@@ -378,9 +435,9 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
             continue;
         }
 
-        if (  (NULL != option->long_key)
-           && (NULL != (*begin)->long_key)
-           && (0 == strcmp((*begin)->long_key, option->long_key)) ) {
+        if (  (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key))
+           && (cmdline_bool_false == cmdline_buffer_is_empty(&(*begin)->long_key))
+           && (cmdline_bool_true  == cmdline_buffer_is_equal(&(*begin)->long_key, &option->long_key)) ) {
             result  =   cmdline_option_add_long_key_already_exists;
             continue;
         }
@@ -424,13 +481,14 @@ static int cmdline_is_reperesentation_set(cmdline_option_representation_t* repr)
 static void cmdline_get_representation( cmdline_option_t* option
                                       , cmdline_option_representation_t* repr )
 {
-    if (NULL == option->long_key) {
+    if (cmdline_bool_true == cmdline_buffer_is_empty(&option->long_key)) {
         repr->short_key =   option->short_key;
         repr->long_key  =   NULL;
     }
     else {
         repr->short_key =   '\0';
-        repr->long_key  =   option->long_key;
+        //TODO: may have some unrelated symbols, as buffer->size not used
+        repr->long_key  =   option->long_key.buffer;
     }
 }
 
@@ -700,11 +758,12 @@ void cmdline_option_parser_set_short_key( char                                  
     cmdline_option_parser_set_option(option_pos, parser, state, report);
 }
 
-static int cmdline_long_key_locator(cmdline_option_t* option, void* context)
+static int cmdline_long_key_wth_value_locator(cmdline_option_t* option, void* context)
 {
-    const char* long_key   =   (const char*)context;
+    cmdline_buffer_t*   long_key    =   (cmdline_buffer_t*)context;
 
-    if ((NULL != option->long_key) && (0 == strcmp(option->long_key,long_key))) {
+    if (  (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key))
+       && (cmdline_bool_true  == cmdline_buffer_is_equal(&option->long_key, long_key)) ) {
         return 1;
     }
     else {
@@ -717,9 +776,11 @@ void cmdline_option_parser_set_long_key( const char*                            
                                        , cmdline_option_parser_parsing_state_t* state
                                        , cmdline_option_parser_report_t*        report )
 {
+    cmdline_buffer_t                    long_key_buffer;
+    cmdline_buffer_from_cstring(&long_key_buffer, long_key);
     cmdline_option_vector_iterator_t    option_pos  =   cmdline_option_vector_find( &parser->options
-                                                                                  , cmdline_long_key_locator
-                                                                                  , (void*)long_key );
+                                                                                  , cmdline_long_key_wth_value_locator
+                                                                                  , (void*)&long_key_buffer );
     if (cmdline_option_vector_end(&parser->options) == option_pos) {
         report->option_wth_error.short_key  =   '\0';
         report->option_wth_error.long_key   =   long_key;
@@ -729,25 +790,6 @@ void cmdline_option_parser_set_long_key( const char*                            
     }
 
     cmdline_option_parser_set_option(option_pos, parser, state, report);
-}
-
-typedef struct cmdline_buffer_s {
-    const char*     buffer;
-    unsigned int    size;
-} cmdline_buffer_t;
-
-static int cmdline_long_key_wth_value_locator(cmdline_option_t* option, void* context)
-{
-    cmdline_buffer_t*   long_key    =   (cmdline_buffer_t*)context;
-
-    if (  (NULL != option->long_key)
-       && (strlen(option->long_key) == long_key->size)
-       && (0 == strncmp(option->long_key, long_key->buffer, long_key->size)) ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
 }
 
 void cmdline_option_parser_set_long_key_wth_value( const char*                            long_key_wth_value
@@ -803,7 +845,8 @@ void cmdline_option_parser_set_short_key_complex( const char*                   
 {
     if (NULL != state->marked_option) {
         report->option_wth_error.short_key  =   state->marked_option->short_key;
-        report->option_wth_error.long_key   =   state->marked_option->long_key;
+        //TODO: may have some unrelated symbols, as buffer->size not used
+        report->option_wth_error.long_key   =   state->marked_option->long_key.buffer;
         report->argument_index              =   state->arg_index;
         report->status                      =   cmdline_option_parser_status_no_arg;
         return;
@@ -894,7 +937,7 @@ void cmdline_option_parser_parse_internal( cmdline_option_parser_t*             
 
     if (state->options_count != index_of_required_and_unmarked) {
         cmdline_get_representation( cmdline_option_vector_at(&parser->options, index_of_required_and_unmarked)
-                                  , &report->option_wth_error);
+                                  , &report->option_wth_error );
         report->argument_index  =   -1;
         report->status          =   cmdline_option_parser_status_no_required_option;
         return;
@@ -974,14 +1017,14 @@ unsigned int cmdline_option_key_size(cmdline_option_t* option)
     }
 
     /*', ' - beetwen them*/
-    if (('\0' != option->short_key) && (NULL != option->long_key)) {
+    if (('\0' != option->short_key) && (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key))) {
         size    +=  2;
     }
 
     /*--long-key*/
-    if (NULL != option->long_key) {
+    if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
         size    +=  2;
-        size    +=  strlen(option->long_key);
+        size    +=  option->long_key.size;
     }
 
     if (cmdline_do_not_use_param == option->is_use_param) {
@@ -1021,12 +1064,13 @@ void cmdline_option_key_print( cmdline_option_t* option
         fprintf(stderr, "-%c", option->short_key);
     }
 
-    if (('\0' != option->short_key) && (NULL != option->long_key)) {
+    if (('\0' != option->short_key) && (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key))) {
         fprintf(stderr, ", ");
     }
 
-    if (NULL != option->long_key) {
-        fprintf(stderr, "--%s", option->long_key);
+    if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
+        //TODO: may have some unrelated symbols, as buffer->size not used
+        fprintf(stderr, "--%s", option->long_key.buffer);
     }
 
     if (cmdline_do_not_use_param == option->is_use_param) {
@@ -1135,8 +1179,9 @@ const char* cmdline_option_is_option_add_translate(cmdline_is_option_add_e statu
 
 void cmdline_option_to_human(cmdline_option_t* option)
 {
-    if (NULL != option->long_key) {
-        fprintf(stderr, " \"%s\"\n", option->long_key);
+    //TODO: may have some unrelated symbols, as buffer->size not used
+    if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
+        fprintf(stderr, " \"%s\"\n", option->long_key.buffer);
     }
     else {
         fprintf(stderr, " \"%c\"\n", option->short_key);
@@ -1170,7 +1215,8 @@ void cmdline_option_parser_add_report(cmdline_option_t* option, cmdline_is_optio
             break;
 
         case cmdline_option_add_long_key_already_exists:
-            fprintf(stderr, "%s \"%s\"\n", translation, option->long_key);
+            //TODO: may have some unrelated symbols, as buffer->size not used
+            fprintf(stderr, "%s \"%s\"\n", translation, option->long_key.buffer);
             break;
 
         case cmdline_option_add_same_option_twice:
