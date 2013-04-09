@@ -1069,8 +1069,7 @@ void cmdline_option_key_print( cmdline_option_t* option
     }
 
     if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
-        //TODO: may have some unrelated symbols, as buffer->size not used
-        fprintf(stderr, "--%s", option->long_key.buffer);
+        fprintf(stderr, "--%*s", option->long_key.size, option->long_key.buffer);
     }
 
     if (cmdline_do_not_use_param == option->is_use_param) {
@@ -1179,9 +1178,8 @@ const char* cmdline_option_is_option_add_translate(cmdline_is_option_add_e statu
 
 void cmdline_option_to_human(cmdline_option_t* option)
 {
-    //TODO: may have some unrelated symbols, as buffer->size not used
     if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
-        fprintf(stderr, " \"%s\"\n", option->long_key.buffer);
+        fprintf(stderr, " \"%*s\"\n", option->long_key.size, option->long_key.buffer);
     }
     else {
         fprintf(stderr, " \"%c\"\n", option->short_key);
@@ -1215,8 +1213,7 @@ void cmdline_option_parser_add_report(cmdline_option_t* option, cmdline_is_optio
             break;
 
         case cmdline_option_add_long_key_already_exists:
-            //TODO: may have some unrelated symbols, as buffer->size not used
-            fprintf(stderr, "%s \"%s\"\n", translation, option->long_key.buffer);
+            fprintf(stderr, "%s \"%*s\"\n", translation, option->long_key.size, option->long_key.buffer);
             break;
 
         case cmdline_option_add_same_option_twice:
