@@ -244,14 +244,14 @@ cmdline_bool_e cmdline_parse_easy_format( const char*       formated
     if (1 == to_start) {
         *short_key          =   formated[0];
         long_key->buffer    =   delimiter_pos + 1;
-        long_key->size      =   to_end;
+        long_key->size      =   length - 2;
         return cmdline_bool_true;
     }
 
     if (2 == to_end) {
         *short_key          =   delimiter_pos[1];
         long_key->buffer    =   formated;
-        long_key->size      =   to_start;
+        long_key->size      =   length - 2;
         return cmdline_bool_true;
     }
 
@@ -1188,7 +1188,7 @@ void cmdline_option_key_print( cmdline_option_t* option
     }
 
     if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
-        fprintf(stderr, "--%*s", option->long_key.size, option->long_key.buffer);
+        fprintf(stderr, "--%.*s", option->long_key.size, option->long_key.buffer);
     }
 
     if (cmdline_do_not_use_param == option->is_use_param) {
