@@ -25,8 +25,7 @@ typedef struct cmdline_option_parser_iface_s {
 
     cmdline_is_option_add_e (*add_option) (void* self, cmdline_option_t* option);
     void (*add_opt) ( void*             self
-                    , char              short_key
-                    , const char*       long_key
+                    , const char*       easy_format
                     , const char*       desc
                     , void*             value
                     , const char*       default_value
@@ -34,38 +33,33 @@ typedef struct cmdline_option_parser_iface_s {
                     , int               required );
 
     void (*add_flag) ( void*       self
-                     , char        short_key
-                     , const char* long_key
+                     , const char* easy_format
                      , const char* desc
                      , int*        value );
 
     void (*add_int) ( void*       self
-                    , char        short_key
-                    , const char* long_key
+                    , const char* easy_format
                     , const char* desc
                     , long int*   value
                     , const char* default_value
                     , int         required );
 
     void (*add_str) ( void*        self
-                    , char         short_key
-                    , const char*  long_key
+                    , const char*  easy_format
                     , const char*  desc
                     , const char** value
                     , const char*  default_value
                     , int          required );
 
     void (*add_double) ( void*       self
-                       , char        short_key
-                       , const char* long_key
+                       , const char* easy_format
                        , const char* desc
                        , double*     value
                        , const char* default_value
                        , int         required );
 
     void (*add_raw_enum) ( void*                  self
-                         , char                   short_key
-                         , const char*            long_key
+                         , const char* easy_format
                          , const char*            desc
                          , cmdline_enum_mapper_t* mapper
                          , const char*            default_value

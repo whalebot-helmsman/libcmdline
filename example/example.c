@@ -24,9 +24,9 @@ int main(int argc, char** argv)
 
     parser->add_help_flag(parser, 'h');
 
-    parser->add_flag(parser, 'f', "flag"  , "flag symbolizes something binary", &flag);
-    parser->add_int(parser,  'I', NULL    , "something you can count"         , &i   , "0" , parser->NOT_REQUIRED);
-    parser->add_str(parser,  's', "string", "something looks like human word" , &str , NULL, parser->REQUIRED);
+    parser->add_flag(parser, "flag,f"  , "flag symbolizes something binary", &flag);
+    parser->add_int(parser,  "I"       , "something you can count"         , &i   , "0" , parser->NOT_REQUIRED);
+    parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL, parser->REQUIRED);
 
 
     cmdline_enum_mapper_cell_t      cells[]     =   { {"zero",   zero}
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     cmdline_enum_mapper_t           mapper      =   { cells
                                                     , sizeof(cells)/sizeof(cells[0])
                                                     , &enumerated };
-    parser->add_raw_enum(parser,  'e', "enum", "something enumerated" , &mapper , "zero", parser->NOT_REQUIRED);
+    parser->add_raw_enum(parser,  "enum,e", "something enumerated" , &mapper , "zero", parser->NOT_REQUIRED);
 
     parser->full_parse(parser, argc, argv);
 

@@ -28,6 +28,12 @@ cmdline_option_t* cmdline_option_create( char              short_key
                                        , const char*       default_value
                                        , int               required );
 
+cmdline_option_t* cmdline_option_create_easy_format( const char*       short_and_long_key_united
+                                                   , const char*       desc
+                                                   , void*             value
+                                                   , cmdline_cast_arg  caster
+                                                   , const char*       default_value
+                                                   , int               required );
 typedef enum cmdline_is_flag_set_s {
     cmdline_flag_not_set = 0,
     cmdline_flag_set
@@ -37,6 +43,10 @@ cmdline_option_t* cmdline_flag_create( char        short_key
                                      , const char* long_key
                                      , const char* desc
                                      , int*        flag );
+
+cmdline_option_t* cmdline_flag_create_easy_format( const char* short_and_long_key_united
+                                                 , const char* desc
+                                                 , int*        flag );
 
 void cmdline_option_destroy(cmdline_option_t* option);
 
