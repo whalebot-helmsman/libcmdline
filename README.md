@@ -42,7 +42,7 @@ If there is some errors in command line parameters you will see help message
         -e, --enum                  something enumerated [= zero]
     free params: why you need free params
 
-Building
+Install
 ============
 Building in source root run next commands
 
@@ -51,6 +51,9 @@ Building in source root run next commands
     cd build
     cmake -DCMAKE_BUILD_TYPE=Release ../
     make
+    #you need to be root to install library in your system
+    su -c 'make install'
+
 
 Requirements
 ============
