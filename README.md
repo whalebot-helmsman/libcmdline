@@ -5,7 +5,7 @@ pure-c library to handle command line arguments
 Usage
 =====
 See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/ba05097855e23daad62daf08e70bf2cdca593b48/example/example.c?at=default)
-    :::clang
+    :::c
     cmdline_option_parser_iface_t*  parser  =   cmdline_option_parser_iface_construct();
     parser->set_program_description(parser, "program to demonstrate abilities of libcmdline library");
     parser->set_free_params_description(parser, "why you need free params");
