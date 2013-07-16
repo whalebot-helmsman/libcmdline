@@ -1447,10 +1447,10 @@ void cmdline_option_parser_section_add_report( const char* section_title
 void cmdline_option_to_human(cmdline_option_t* option)
 {
     if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
-        fprintf(stderr, " \"%*s\"\n", option->long_key.size, option->long_key.buffer);
+        fprintf(stderr, " \033[1;31m\"%*s\"\033[0m\n", option->long_key.size, option->long_key.buffer);
     }
     else {
-        fprintf(stderr, " \"%c\"\n", option->short_key);
+        fprintf(stderr, " \033[1;31m\"%c\"\033[0m\n", option->short_key);
     }
 }
 
@@ -1531,10 +1531,10 @@ const char* cmdline_option_parser_status_to_human(cmdline_option_parser_status_e
 void cmdline_option_repr_to_human(cmdline_option_representation_t repr)
 {
     if (NULL != repr.long_key) {
-        fprintf(stderr, ": \"%s\"\n", repr.long_key);
+        fprintf(stderr, ": \033[1;31m\"%s\"\033[0m\n", repr.long_key);
     }
     else if ('\0' != repr.short_key) {
-        fprintf(stderr, ": \"%c\"\n", repr.short_key);
+        fprintf(stderr, ": \033[1;31m\"%c\"\033[0m\n", repr.short_key);
     }
     else {
         fprintf(stderr, "\n");
