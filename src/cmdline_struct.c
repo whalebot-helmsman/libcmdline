@@ -76,6 +76,30 @@ cmdline_is_option_add_e cmdline_option_parser_iface_add_option( void*           
     return cmdline_option_parser_add_option(self_typed->base, option);
 }
 
+cmdline_is_option_add_e cmdline_option_parser_iface_add_section( void*       self
+                                                               , const char* section_title )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    return cmdline_option_parser_add_section(self_typed->base, section_title);
+}
+
+void cmdline_option_parser_iface_add_section_full( void*       self
+                                                 , const char* section_title )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    cmdline_is_option_add_e         status      =   self_typed->add_section( self_typed
+                                                                           , section_title );
+    if (cmdline_option_add_success == status) {
+        return;
+    }
+
+    cmdline_option_parser_section_add_report(section_title, status);
+
+
+    self_typed->destruct(self_typed);
+    exit(1);
+}
+
 void cmdline_option_parser_iface_add_option_full_internal( void*             self
                                                          , cmdline_option_t* option )
 {
@@ -212,6 +236,8 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->report                       =   cmdline_option_parser_report_print;
     iface->full_parse                   =   cmdline_option_parser_iface_parse_full;
     iface->print_help                   =   cmdline_option_parser_iface_print_help;
+    iface->add_section                  =   cmdline_option_parser_iface_add_section;
+    iface->add_sect                     =   cmdline_option_parser_iface_add_section_full;
     iface->add_option                   =   cmdline_option_parser_iface_add_option;
     iface->add_opt                      =   cmdline_option_parser_iface_add_opt;
     iface->add_int                      =   cmdline_option_parser_iface_add_int;

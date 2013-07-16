@@ -69,6 +69,12 @@ typedef enum cmdline_is_option_add_s {
 
 cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_t* parser
                                                         , cmdline_option_t*        option );
+
+cmdline_is_option_add_e cmdline_option_parser_add_section( cmdline_option_parser_t* parser
+                                                         , const char*              section_name );
+void cmdline_option_parser_section_add_report( const char* section_title
+                                             , cmdline_is_option_add_e status );
+
 void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
                                           , const char*              description );
 void cmdline_option_parser_add_free_params_description( cmdline_option_parser_t* parser

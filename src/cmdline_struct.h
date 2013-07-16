@@ -23,6 +23,9 @@ typedef struct cmdline_option_parser_iface_s {
     void (*full_parse) (void* self, int argc, char** argv);
     void (*report) (cmdline_option_parser_report_t report, int argc, char** argv);
 
+    cmdline_is_option_add_e (*add_section) (void* self, const char* section_title);
+    void (*add_sect) (void* self, const char* section_title);
+
     cmdline_is_option_add_e (*add_option) (void* self, cmdline_option_t* option);
     void (*add_opt) ( void*             self
                     , const char*       easy_format
