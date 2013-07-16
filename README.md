@@ -1,6 +1,6 @@
 libcmdline
 ==========
-pure-c library to handle command line arguments
+pure-c library to handle command line arguments. MIT-licenced
 
 Usage
 =====
