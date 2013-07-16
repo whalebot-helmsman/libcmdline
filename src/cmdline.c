@@ -476,11 +476,88 @@ cmdline_option_parser_free_params_iterator_t cmdline_free_params_end(cmdline_opt
     return free_params->buffer + free_params->size;
 }
 
+typedef struct cmdline_option_parser_separator_s {
+    const char*     section_title;
+    unsigned int    option_number_separator_shown_after;
+} cmdline_option_parser_separator_t;
+
+typedef struct cmdline_option_parser_separator_pack_s {
+    cmdline_option_parser_separator_t** buffer;
+    int                                 size;
+} cmdline_option_parser_separator_pack_t;
+
+typedef cmdline_option_parser_separator_t** cmdline_option_parser_separator_pack_iterator_t;
+
+cmdline_option_parser_separator_pack_t* cmdline_option_parser_separator_pack_create()
+{
+    cmdline_option_parser_separator_pack_t* pack    =   malloc(sizeof(cmdline_option_parser_separator_pack_t));
+
+    if (NULL == pack) {
+        return NULL;
+    }
+
+    pack->buffer    =   malloc(sizeof(cmdline_option_t*));
+    *pack->buffer   =   NULL;
+    pack->size      =   0;
+
+    return pack;
+}
+
+cmdline_option_vector_add_result_t cmdline_option_parser_separator_pack_push( cmdline_option_parser_separator_pack_t* pack
+                                                                            , cmdline_option_parser_separator_t*      separator )
+{
+    int place   =   pack->size;
+
+    pack->size  +=  1;
+
+    cmdline_option_parser_separator_t**    new_buffer  =   realloc( pack->buffer
+                                                                  , sizeof(cmdline_option_parser_separator_t*) * pack->size );
+
+    if (NULL == new_buffer) {
+        return cmdline_option_vector_add_result_failure;
+    }
+
+    pack->buffer        =   new_buffer;
+    pack->buffer[place] =   separator;
+    return cmdline_option_vector_add_result_success;
+}
+
+cmdline_option_parser_separator_pack_iterator_t cmdline_separator_pack_begin(cmdline_option_parser_separator_pack_t* pack)
+{
+    return pack->buffer;
+}
+
+cmdline_option_parser_separator_pack_iterator_t cmdline_separator_pack_end(cmdline_option_parser_separator_pack_t* pack)
+{
+    return pack->buffer + pack->size;
+}
+
+void cmdline_option_parser_separator_pack_destroy(cmdline_option_parser_separator_pack_t* pack)
+{
+    if (NULL == pack) {
+        return;
+    }
+    cmdline_option_parser_separator_pack_iterator_t begin   =   cmdline_separator_pack_begin(pack);
+    cmdline_option_parser_separator_pack_iterator_t end     =   cmdline_separator_pack_end(pack);
+
+    while (begin != end) {
+        free(*begin);
+        begin +=    1;
+    }
+
+    if (NULL != pack->buffer) {
+        free(pack->buffer);
+    }
+
+    free(pack);
+}
+
 struct cmdline_option_parser_s {
     cmdline_option_vector_t                 options;
     cmdline_option_parser_free_params_t*    free_params;
     int                                     is_help_asked;
     const char*                             description;
+    cmdline_option_parser_separator_pack_t* separators;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -504,6 +581,13 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
+    parser->separators  =   cmdline_option_parser_separator_pack_create();
+
+    if (NULL == parser->separators) {
+        cmdline_option_parser_destroy(parser);
+        return NULL;
+    }
+
     parser->is_help_asked           =   cmdline_flag_not_set;
     parser->description             =   NULL;
 
@@ -514,6 +598,7 @@ void cmdline_option_parser_destroy(cmdline_option_parser_t* parser)
 {
     cmdline_option_vector_destroy(&parser->options);
     cmdline_option_parser_free_params_destroy(parser->free_params);
+    cmdline_option_parser_separator_pack_destroy(parser->separators);
     free(parser);
 }
 
@@ -577,6 +662,40 @@ cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_
     }
 
     return cmdline_option_add_success;
+}
+
+
+cmdline_is_option_add_e cmdline_option_parser_add_section_internal( cmdline_option_parser_t* parser
+                                                                  , const char*              section_name
+                                                                  , unsigned int             option_number_separator_shown_after )
+{
+    cmdline_option_parser_separator_t*  separator   =   malloc(sizeof(cmdline_option_parser_separator_t));
+    if (NULL == separator) {
+        return cmdline_option_add_no_memory;
+    }
+    separator->section_title                        =   section_name;
+    separator->option_number_separator_shown_after  =   option_number_separator_shown_after;
+    cmdline_option_vector_add_result_t  result  =   cmdline_option_parser_separator_pack_push(parser->separators, separator);
+    if (cmdline_option_vector_add_result_failure == result) {
+        free(separator);
+        return cmdline_option_add_no_memory;
+    }
+
+    return cmdline_option_add_success;
+}
+cmdline_is_option_add_e cmdline_option_parser_add_section( cmdline_option_parser_t* parser
+                                                         , const char*              section_name )
+{
+    cmdline_is_option_add_e result  =   cmdline_option_add_success;
+    if ((0 == parser->separators->size) && (0 != parser->options.size)) {
+        result  =   cmdline_option_parser_add_section_internal(parser, "General parameters", 0);
+    }
+
+    if (cmdline_option_add_success != result) {
+        return result;
+    }
+
+    return cmdline_option_parser_add_section_internal(parser, section_name, parser->options.size);
 }
 
 void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
@@ -1227,6 +1346,15 @@ void cmdline_option_description_print( cmdline_option_t* option
     fprintf(stderr, "\n");
 }
 
+void cmdline_option_separator_print(cmdline_option_parser_separator_t* separator)
+{
+    if (NULL != separator->section_title) {
+        fprintf(stderr, "\033[1;34m%s:\033[0m", separator->section_title);
+    }
+
+    fprintf(stderr, "\n");
+}
+
 void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
 {
     unsigned int    keys_max_size           =   0;
@@ -1256,12 +1384,24 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
         iter    +=  1;
     }
 
-    iter    =   begin;
+    cmdline_option_parser_separator_pack_iterator_t separator_begin         =   cmdline_separator_pack_begin(parser->separators);
+    cmdline_option_parser_separator_pack_iterator_t separator_end           =   cmdline_separator_pack_end(parser->separators);
+    cmdline_option_parser_separator_pack_iterator_t separator_iter          =   separator_begin;
+    unsigned int                                    option_number           =   0;
+
+    iter            =   begin;
     while (iter != end) {
+
+        if ((separator_end != separator_iter) && (option_number == (*separator_iter)->option_number_separator_shown_after)) {
+            cmdline_option_separator_print(*separator_iter);
+            separator_iter  +=  1;
+        }
+
         cmdline_option_t*   option      =   *iter;
         cmdline_option_key_print(option, keys_max_size);
         cmdline_option_description_print(option, description_max_size);
-        iter    +=  1;
+        iter            +=  1;
+        option_number   +=  1;
     }
 
     if (NULL != parser->free_params->description) {
@@ -1292,6 +1432,16 @@ const char* cmdline_option_is_option_add_translate(cmdline_is_option_add_e statu
             return "status unknown";
 
     }
+}
+
+void cmdline_option_parser_section_add_report( const char* section_title
+                                             , cmdline_is_option_add_e status )
+{
+    const char* translation =   cmdline_option_is_option_add_translate(status);
+    fprintf( stderr
+           , "cannot add section with title \"%s\", because of %s"
+           , section_title
+           , translation );
 }
 
 void cmdline_option_to_human(cmdline_option_t* option)
