@@ -424,7 +424,7 @@ cmdline_option_parser_free_params_t* cmdline_option_parser_free_params_create()
         return NULL;
     }
 
-    free_params->buffer         =   malloc(sizeof(cmdline_option_t*));
+    free_params->buffer         =   malloc(sizeof(const char*));
     *free_params->buffer        =   NULL;
     free_params->size           =   0;
     free_params->is_required    =   cmdline_option_not_required;
@@ -454,7 +454,7 @@ cmdline_option_vector_add_result_t cmdline_option_parser_free_params_push( cmdli
     free_params->size   +=  1;
 
     const char**  new_buffer  =   realloc( free_params->buffer
-                                         , sizeof(cmdline_option_t*) * free_params->size );
+                                         , sizeof(const char*) * free_params->size );
 
     if (NULL == new_buffer) {
         return cmdline_option_vector_add_result_failure;
@@ -496,7 +496,7 @@ cmdline_option_parser_separator_pack_t* cmdline_option_parser_separator_pack_cre
         return NULL;
     }
 
-    pack->buffer    =   malloc(sizeof(cmdline_option_t*));
+    pack->buffer    =   malloc(sizeof(cmdline_option_parser_separator_t*));
     *pack->buffer   =   NULL;
     pack->size      =   0;
 
