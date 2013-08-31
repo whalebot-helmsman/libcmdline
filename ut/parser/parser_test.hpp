@@ -478,6 +478,7 @@ TEST(ParserTest, you_can_use_non_dash_terminated_negative_as_value_for_option)
 
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
     EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    cmdline_option_parser_destroy(parser);
 }
 
 TEST(ParserTest, you_cannot_pass_free_options_when_they_are_forbidden)
