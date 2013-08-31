@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 mkdir gtest
 pushd gtest
 wget http://googletest.googlecode.com/files/gtest-1.6.0.zip
