@@ -558,6 +558,7 @@ struct cmdline_option_parser_s {
     int                                     is_help_asked;
     const char*                             description;
     cmdline_option_parser_separator_pack_t* separators;
+    const char*                             example;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -702,6 +703,12 @@ void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
                                           , const char*              description )
 {
     parser->description =   description;
+}
+
+void cmdline_option_parser_add_example( cmdline_option_parser_t* parser
+                                      , const char*              example )
+{
+    parser->example =   example;
 }
 
 void cmdline_option_parser_add_free_params_description( cmdline_option_parser_t* parser
@@ -1336,6 +1343,10 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
 
     if (NULL != parser->description) {
         fprintf(stderr, "Description: %s\n", parser->description);
+    }
+
+    if (NULL != parser->example) {
+        fprintf(stderr, "Example    : %s\n", parser->example);
     }
 
     cmdline_option_vector_iterator_t    begin   =   cmdline_option_vector_begin(&parser->options);

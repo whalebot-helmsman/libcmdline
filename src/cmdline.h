@@ -77,6 +77,8 @@ void cmdline_option_parser_section_add_report( const char* section_title
 
 void cmdline_option_parser_add_description( cmdline_option_parser_t* parser
                                           , const char*              description );
+void cmdline_option_parser_add_example( cmdline_option_parser_t* parser
+                                      , const char*              example );
 void cmdline_option_parser_add_free_params_description( cmdline_option_parser_t* parser
                                                       , const char*              description );
 void cmdline_option_parser_add_report(cmdline_option_t* option, cmdline_is_option_add_e status);
