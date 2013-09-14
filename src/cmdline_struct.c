@@ -15,6 +15,12 @@ void cmdline_option_parser_iface_add_program_description(void* self, const char*
     cmdline_option_parser_add_description(self_typed->base, description);
 }
 
+void cmdline_option_parser_iface_add_program_example(void* self, const char* example)
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    cmdline_option_parser_add_example(self_typed->base, example);
+}
+
 void cmdline_option_parser_iface_add_free_params_description(void* self, const char* description)
 {
     cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
@@ -227,6 +233,7 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
 
     iface->destruct                     =   cmdline_option_parser_iface_destroy;
     iface->set_program_description      =   cmdline_option_parser_iface_add_program_description;
+    iface->set_program_example          =   cmdline_option_parser_iface_add_program_example;
     iface->set_free_params_description  =   cmdline_option_parser_iface_add_free_params_description;
     iface->set_free_params_requirement  =   cmdline_option_parser_iface_set_free_params_requiremnt;
     iface->free_params_end              =   cmdline_option_parser_iface_free_params_end;
