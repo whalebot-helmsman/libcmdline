@@ -17,6 +17,8 @@ typedef struct cmdline_option_parser_iface_s {
     void (*set_program_description) (void* self, const char* description);
     void (*set_program_example) (void* self, const char* example);
 
+    const char* (*format) (void* self, const char* format, ...);
+
     void (*add_help_flag) (void* self, char short_key);
     void (*print_help) (void* self);
 

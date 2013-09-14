@@ -1,5 +1,6 @@
 #include "cmdline.h"
 #include <stddef.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -476,6 +477,27 @@ cmdline_option_parser_free_params_iterator_t cmdline_free_params_end(cmdline_opt
     return free_params->buffer + free_params->size;
 }
 
+void cmdline_option_parser_string_storage_destroy(cmdline_option_parser_free_params_t* string_storage)
+{
+    if (NULL == string_storage) {
+        return;
+    }
+
+    cmdline_option_parser_free_params_iterator_t    begin   =   cmdline_free_params_begin(string_storage);
+    cmdline_option_parser_free_params_iterator_t    end     =   cmdline_free_params_end(string_storage);
+
+    while (begin != end) {
+        free(*begin);
+        begin   +=  1;
+    }
+
+    if (NULL != string_storage->buffer) {
+        free(string_storage->buffer);
+    }
+
+    free(string_storage);
+}
+
 typedef struct cmdline_option_parser_separator_s {
     const char*     section_title;
     unsigned int    option_number_separator_shown_after;
@@ -559,6 +581,7 @@ struct cmdline_option_parser_s {
     const char*                             description;
     cmdline_option_parser_separator_pack_t* separators;
     const char*                             example;
+    cmdline_option_parser_free_params_t*    string_storage;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -582,6 +605,13 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
+    parser->string_storage  =   cmdline_option_parser_free_params_create();
+
+    if (NULL == parser->string_storage) {
+        cmdline_option_parser_destroy(parser);
+        return NULL;
+    }
+
     parser->separators  =   cmdline_option_parser_separator_pack_create();
 
     if (NULL == parser->separators) {
@@ -595,10 +625,45 @@ cmdline_option_parser_t* cmdline_option_parser_create()
     return parser;
 }
 
+const char* cmdline_option_parser_format_internal( cmdline_option_parser_t* parser
+                                                 , const char*              format
+                                                 , va_list                  args   )
+{
+    static const unsigned int   max_str_size    =   256;
+    char*   str =   malloc(max_str_size * sizeof(*str));
+    if (NULL == str) {
+        return NULL;
+    }
+
+    cmdline_option_vector_add_result_t  push_status =   cmdline_option_parser_free_params_push(parser->string_storage, str);
+    if (cmdline_option_vector_add_result_success != push_status) {
+        free(str);
+        return NULL;
+    }
+
+    memset(str, 0, max_str_size * sizeof(*str));
+
+    vsnprintf(str, max_str_size, format, args);
+
+    return str;
+}
+
+const char* cmdline_option_parser_format( cmdline_option_parser_t* parser
+                                        , const char*              format
+                                        , ...                             )
+{
+    va_list args;
+    va_start(args, format);
+    const char* str =   cmdline_option_parser_format_internal(parser, format, args);
+    va_end(args);
+    return str;
+}
+
 void cmdline_option_parser_destroy(cmdline_option_parser_t* parser)
 {
     cmdline_option_vector_destroy(&parser->options);
     cmdline_option_parser_free_params_destroy(parser->free_params);
+    cmdline_option_parser_string_storage_destroy(parser->string_storage);
     cmdline_option_parser_separator_pack_destroy(parser->separators);
     free(parser);
 }
