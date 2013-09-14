@@ -584,3 +584,32 @@ TEST(ParserTest, you_can_pass_double_escaping_dash_and_minus_as_parameter)
     cmdline_option_parser_destroy(parser);
 }
 
+TEST(ParserTest, you_can_pass_empty_strings_as_free_parameter)
+{
+    cmdline_option_parser_t*    parser      =   cmdline_option_parser_create();
+    const char*                 value       =   NULL;
+    char*   argv[]  =   {"some_command", ""};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_EQ( cmdline_option_parser_free_params_end(parser) - cmdline_option_parser_free_params_begin(parser)
+            , 1 );
+    EXPECT_STREQ(*cmdline_option_parser_free_params_begin(parser), "");
+    cmdline_option_parser_destroy(parser);
+}
+
+TEST(ParserTest, you_can_pass_empty_strings_as_option_value)
+{
+    cmdline_option_parser_t*    parser      =   cmdline_option_parser_create();
+    const char*                 value       =   NULL;
+    cmdline_str(parser, 'b', "aa", "aa desc", &value, NULL, NOT_REQ);
+    char*   argv[]  =   {"some_command", "-b", ""};
+    int     argc    =   sizeof(argv)/sizeof(argv[0]);
+
+    cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
+    EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
+    EXPECT_STREQ("", value);
+    cmdline_option_parser_destroy(parser);
+}
+
