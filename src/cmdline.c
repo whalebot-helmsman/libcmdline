@@ -1275,24 +1275,6 @@ unsigned int cmdline_option_key_size(cmdline_option_t* option)
     return size;
 }
 
-
-unsigned int cmdline_option_description_size(cmdline_option_t* option)
-{
-    unsigned int    size            =   0;
-
-    if (NULL != option->desc) {
-        size    +=  strlen(option->desc);
-    }
-
-    /* [= default_value]*/
-    if (NULL != option->default_value) {
-        size    +=  5;
-        size    +=  strlen(option->default_value);
-    }
-
-    return size;
-}
-
 void cmdline_option_key_print( cmdline_option_t* option
                              , unsigned int      keys_max_size )
 {
@@ -1326,8 +1308,7 @@ void cmdline_option_key_print( cmdline_option_t* option
     fprintf(stderr, "    ");
 }
 
-void cmdline_option_description_print( cmdline_option_t* option
-                                     , unsigned int      desc_max_size )
+void cmdline_option_description_print(cmdline_option_t* option)
 {
     if (NULL != option->desc) {
         fprintf(stderr, "%s", option->desc);
@@ -1335,12 +1316,6 @@ void cmdline_option_description_print( cmdline_option_t* option
 
     if (NULL != option->default_value) {
         fprintf(stderr, " [= %s]", option->default_value);
-    }
-
-    unsigned int    size    =   cmdline_option_description_size(option);
-    unsigned int    i;
-    for (i = 0; i != desc_max_size - size; ++i) {
-        fprintf(stderr, " ");
     }
 
     fprintf(stderr, "\n");
@@ -1358,7 +1333,6 @@ void cmdline_option_separator_print(cmdline_option_parser_separator_t* separator
 void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
 {
     unsigned int    keys_max_size           =   0;
-    unsigned int    description_max_size    =   0;
 
     if (NULL != parser->description) {
         fprintf(stderr, "Description: %s\n", parser->description);
@@ -1371,14 +1345,9 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
     while (iter != end) {
         cmdline_option_t*   option      =   *iter;
         unsigned int        key_size    =   cmdline_option_key_size(option);
-        unsigned int        descr_size  =   cmdline_option_description_size(option);
 
         if (key_size > keys_max_size) {
             keys_max_size   =   key_size;
-        }
-
-        if (descr_size > description_max_size) {
-            description_max_size    =   descr_size;
         }
 
         iter    +=  1;
@@ -1399,7 +1368,7 @@ void cmdline_option_parser_print_help(cmdline_option_parser_t* parser)
 
         cmdline_option_t*   option      =   *iter;
         cmdline_option_key_print(option, keys_max_size);
-        cmdline_option_description_print(option, description_max_size);
+        cmdline_option_description_print(option);
         iter            +=  1;
         option_number   +=  1;
     }
