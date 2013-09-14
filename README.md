@@ -10,7 +10,7 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/ba0509785
     cmdline_option_parser_iface_t*  parser  =   cmdline_option_parser_iface_construct();
     parser->set_program_description(parser, "program to demonstrate abilities of libcmdline library");
     parser->set_free_params_description(parser, "why you need free params");
-    parser->set_program_example(parser, "bin/example_c -e two -s smth asas");
+    parser->set_program_example(parser, parser->format(parser, "%s -e two -s smth asas", argv[0]));
     parser->set_free_params_requirement(parser, parser->REQUIRED);
 
 
