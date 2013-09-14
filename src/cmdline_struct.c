@@ -1,6 +1,7 @@
 #include "cmdline_struct.h"
 
 #include <stdlib.h>
+#include <stdarg.h>
 
 void  cmdline_option_parser_iface_destroy(void* self)
 {
@@ -61,6 +62,16 @@ void cmdline_option_parser_iface_print_help(void* self)
 {
     cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
     cmdline_option_parser_print_help(self_typed->base);
+}
+
+const char* cmdline_option_parser_iface_format(void* self, const char* format, ...)
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    va_list args;
+    va_start(args, format);
+    const char* str =   cmdline_option_parser_format_internal(self_typed->base, format, args);
+    va_end(args);
+    return str;
 }
 
 void cmdline_option_parser_iface_parse_full(void* self, int argc, char** argv)
@@ -252,6 +263,7 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->add_str                      =   cmdline_option_parser_iface_add_str;
     iface->add_double                   =   cmdline_option_parser_iface_add_double;
     iface->add_raw_enum                 =   cmdline_option_parser_iface_add_raw_enum;
+    iface->format                       =   cmdline_option_parser_iface_format;
 
     iface->REQUIRED     =   cmdline_option_required;
     iface->NOT_REQUIRED =   cmdline_option_not_required;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdarg.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -66,6 +68,14 @@ typedef enum cmdline_is_option_add_s {
     cmdline_option_add_same_option_twice,
     cmdline_option_add_same_value_change
 } cmdline_is_option_add_e;
+
+const char* cmdline_option_parser_format( cmdline_option_parser_t* parser
+                                        , const char*              format
+                                        , ...                             );
+
+const char* cmdline_option_parser_format_internal( cmdline_option_parser_t* parser
+                                                 , const char*              format
+                                                 , va_list                  args   );
 
 cmdline_is_option_add_e cmdline_option_parser_add_option( cmdline_option_parser_t* parser
                                                         , cmdline_option_t*        option );
