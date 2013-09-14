@@ -4,7 +4,7 @@ pure-c library to handle command line arguments. MIT-licenced
 
 Usage
 =====
-See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/ba05097855e23daad62daf08e70bf2cdca593b48/example/example.c?at=default)
+See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/example/example.c?at=default)
 
     :::c
     cmdline_option_parser_iface_t*  parser  =   cmdline_option_parser_iface_construct();
