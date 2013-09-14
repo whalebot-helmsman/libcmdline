@@ -854,7 +854,7 @@ cmdline_arg_type_e cmdline_option_parser_classify_arg(const char* param, int len
     char    equal_sign  =   '=';
 
     if (0 == length) {
-        return cmdline_arg_type_error;
+        return cmdline_arg_type_value;
     }
 
     if ((1 == length) || (param[0] != key_sign)) {
