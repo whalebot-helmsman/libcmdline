@@ -12,22 +12,20 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/ba0509785
     parser->set_free_params_description(parser, "why you need free params");
     parser->set_free_params_requirement(parser, parser->REQUIRED);
 
+
     parser->add_sect(parser, "options start");
     parser->add_help_flag(parser, 'h');
-
     parser->add_flag(parser, "f,flag"  , "flag symbolizes something binary", &flag);
     parser->add_int(parser,  "I"       , "something you can count"         , &i   , "0" , parser->NOT_REQUIRED);
     parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL, parser->REQUIRED);
 
 
     parser->add_sect(parser, "last option");
-    cmdline_enum_mapper_cell_t      cells[]     =   { {"zero",   zero}
-                                                    , {"one",    one}
-                                                    , {"two",    two}
-                                                    , { "three", three} };
-    cmdline_enum_mapper_t           mapper      =   { cells
-                                                    , sizeof(cells)/sizeof(cells[0])
-                                                    , &enumerated };
+    cmdline_enum_mapper_cell_t  cells[] =   { {"zero",  zero }
+                                            , {"one",   one  }
+                                            , {"two",   two  }
+                                            , {"three", three} };
+    CMDLINE_ENUM_MAPPER(mapper, cells, enumerated);
     parser->add_raw_enum(parser,  "enum,e", "something enumerated" , &mapper , "zero", parser->NOT_REQUIRED);
 
     parser->full_parse(parser, argc, argv);

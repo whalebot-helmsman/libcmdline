@@ -31,13 +31,11 @@ int main(int argc, char** argv)
 
 
     parser->add_sect(parser, "last option");
-    cmdline_enum_mapper_cell_t      cells[]     =   { {"zero",   zero}
-                                                    , {"one",    one}
-                                                    , {"two",    two}
-                                                    , { "three", three} };
-    cmdline_enum_mapper_t           mapper      =   { cells
-                                                    , sizeof(cells)/sizeof(cells[0])
-                                                    , &enumerated };
+    cmdline_enum_mapper_cell_t  cells[] =   { {"zero",  zero }
+                                            , {"one",   one  }
+                                            , {"two",   two  }
+                                            , {"three", three} };
+    CMDLINE_ENUM_MAPPER(mapper, cells, enumerated);
     parser->add_raw_enum(parser,  "enum,e", "something enumerated" , &mapper , "zero", parser->NOT_REQUIRED);
 
     parser->full_parse(parser, argc, argv);
