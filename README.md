@@ -27,7 +27,13 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/ba0509785
                                             , {"two",   two  }
                                             , {"three", three} };
     CMDLINE_ENUM_MAPPER(mapper, cells, enumerated);
-    parser->add_raw_enum(parser,  "enum,e", "something enumerated" , &mapper , "zero", parser->NOT_REQUIRED);
+    parser->add_raw_enum( parser
+                        , "enum,e"
+                        , parser->format(parser, "something enumerated (%s, %s, %s, %s)", cells[0].from, cells[1].from, cells[2].from, cells[3].from)
+                        , &mapper
+                        , "zero"
+                        , parser->NOT_REQUIRED);
+
 
     parser->full_parse(parser, argc, argv);
 
@@ -44,7 +50,7 @@ If there is some errors in command line parameters you will see help message
         -I                          something you can count [= 0]
         -s, --string, [required]    something looks like human word
     last option:
-        -e, --enum                  something enumerated [= zero]
+        -e, --enum                  something enumerated (zero, one, two, three) [= zero]
     free params: why you need free params
 
 Install
