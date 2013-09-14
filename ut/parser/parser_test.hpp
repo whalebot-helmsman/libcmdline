@@ -609,7 +609,7 @@ TEST(ParserTest, you_can_pass_empty_strings_as_option_value)
 
     cmdline_option_parser_report_t  report  =   cmdline_option_parser_parse(parser, argc, argv);
     EXPECT_EQ(cmdline_option_parser_status_ok, report.status);
-    EXPECT_STREQ("aa", value);
+    EXPECT_STREQ("", value);
     cmdline_option_parser_destroy(parser);
 }
 
