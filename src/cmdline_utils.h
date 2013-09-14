@@ -62,6 +62,9 @@ typedef struct cmdline_enum_mapper_s {
     int*                        cast_to;
 } cmdline_enum_mapper_t;
 
+#define CMDLINE_ENUM_MAPPER(m, t, v) \
+    cmdline_enum_mapper_t m = {t, sizeof(t)/sizeof(t[0]), &v};
+
 void cmdline_enum( cmdline_option_parser_t* parser
                  , char                     short_key
                  , const char*              long_key
