@@ -65,6 +65,36 @@ typedef struct cmdline_enum_mapper_s {
 #define CMDLINE_ENUM_MAPPER(m, t, v) \
     cmdline_enum_mapper_t m = {t, sizeof(t)/sizeof(t[0]), &v};
 
+#define CMDLINE_ENUM_ENUMERATOR1(t) \
+    t[0].from
+
+#define CMDLINE_ENUM_ENUMERATOR2(t) \
+    CMDLINE_ENUM_ENUMERATOR1(t), t[1].from
+
+#define CMDLINE_ENUM_ENUMERATOR3(t) \
+    CMDLINE_ENUM_ENUMERATOR2(t), t[2].from
+
+#define CMDLINE_ENUM_ENUMERATOR4(t) \
+    CMDLINE_ENUM_ENUMERATOR3(t), t[3].from
+
+#define CMDLINE_ENUM_ENUMERATOR5(t) \
+    CMDLINE_ENUM_ENUMERATOR4(t), t[4].from
+
+#define CMDLINE_ENUM_ENUMERATOR6(t) \
+    CMDLINE_ENUM_ENUMERATOR5(t), t[5].from
+
+#define CMDLINE_ENUM_ENUMERATOR7(t) \
+    CMDLINE_ENUM_ENUMERATOR6(t), t[6].from
+
+#define CMDLINE_ENUM_ENUMERATOR8(t) \
+    CMDLINE_ENUM_ENUMERATOR7(t), t[7].from
+
+#define CMDLINE_ENUM_ENUMERATOR9(t) \
+    CMDLINE_ENUM_ENUMERATOR8(t), t[8].from
+
+#define CMDLINE_ENUM_ENUMERATOR10(t) \
+    CMDLINE_ENUM_ENUMERATOR9(t), t[9].from
+
 void cmdline_enum( cmdline_option_parser_t* parser
                  , char                     short_key
                  , const char*              long_key

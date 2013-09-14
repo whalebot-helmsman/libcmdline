@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     CMDLINE_ENUM_MAPPER(mapper, cells, enumerated);
     parser->add_raw_enum( parser
                         , "enum,e"
-                        , parser->format(parser, "something enumerated (%s, %s, %s, %s)", cells[0].from, cells[1].from, cells[2].from, cells[3].from)
+                        , parser->format(parser, "something enumerated (%s, %s, %s, %s)", CMDLINE_ENUM_ENUMERATOR4(cells))
                         , &mapper
                         , "zero"
                         , parser->NOT_REQUIRED);
