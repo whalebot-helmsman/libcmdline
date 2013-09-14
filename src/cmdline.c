@@ -477,14 +477,65 @@ cmdline_option_parser_free_params_iterator_t cmdline_free_params_end(cmdline_opt
     return free_params->buffer + free_params->size;
 }
 
-void cmdline_option_parser_string_storage_destroy(cmdline_option_parser_free_params_t* string_storage)
+typedef struct cmdline_option_parser_string_storage_s {
+    char**          buffer;
+    unsigned int    size;
+} cmdline_option_parser_string_storage_t;
+
+cmdline_option_parser_string_storage_t* cmdline_option_parser_string_storage_create()
+{
+    cmdline_option_parser_string_storage_t* string_storage  =   malloc(sizeof(cmdline_option_parser_string_storage_t));
+
+    if (NULL == string_storage) {
+        return NULL;
+    }
+
+    string_storage->buffer   =   malloc(sizeof(const char*));
+    *string_storage->buffer  =   NULL;
+    string_storage->size     =   0;
+
+    return string_storage;
+}
+
+typedef char**  cmdline_option_parser_string_storage_iterator_t;
+
+cmdline_option_parser_string_storage_iterator_t cmdline_string_storage_begin(cmdline_option_parser_string_storage_t* string_storage)
+{
+    return string_storage->buffer;
+}
+
+cmdline_option_parser_string_storage_iterator_t cmdline_string_storage_end(cmdline_option_parser_string_storage_t* string_storage)
+{
+    return string_storage->buffer + string_storage->size;
+}
+
+cmdline_option_vector_add_result_t cmdline_option_parser_string_storage_push( cmdline_option_parser_string_storage_t* string_storage
+                                                                            , char*                                   param )
+{
+    int place   =   string_storage->size;
+
+    string_storage->size    +=  1;
+
+    char**  new_buffer  =   realloc( string_storage->buffer
+                                   , sizeof(char*) * string_storage->size );
+
+    if (NULL == new_buffer) {
+        return cmdline_option_vector_add_result_failure;
+    }
+
+    string_storage->buffer          =   new_buffer;
+    string_storage->buffer[place]   =   param;
+    return cmdline_option_vector_add_result_success;
+}
+
+void cmdline_option_parser_string_storage_destroy(cmdline_option_parser_string_storage_t* string_storage)
 {
     if (NULL == string_storage) {
         return;
     }
 
-    cmdline_option_parser_free_params_iterator_t    begin   =   cmdline_free_params_begin(string_storage);
-    cmdline_option_parser_free_params_iterator_t    end     =   cmdline_free_params_end(string_storage);
+    cmdline_option_parser_string_storage_iterator_t    begin   =   cmdline_string_storage_begin(string_storage);
+    cmdline_option_parser_string_storage_iterator_t    end     =   cmdline_string_storage_end(string_storage);
 
     while (begin != end) {
         free(*begin);
@@ -581,7 +632,7 @@ struct cmdline_option_parser_s {
     const char*                             description;
     cmdline_option_parser_separator_pack_t* separators;
     const char*                             example;
-    cmdline_option_parser_free_params_t*    string_storage;
+    cmdline_option_parser_string_storage_t* string_storage;
 };
 
 cmdline_option_parser_t* cmdline_option_parser_create()
@@ -605,7 +656,7 @@ cmdline_option_parser_t* cmdline_option_parser_create()
         return NULL;
     }
 
-    parser->string_storage  =   cmdline_option_parser_free_params_create();
+    parser->string_storage  =   cmdline_option_parser_string_storage_create();
 
     if (NULL == parser->string_storage) {
         cmdline_option_parser_destroy(parser);
@@ -635,7 +686,7 @@ const char* cmdline_option_parser_format_internal( cmdline_option_parser_t* pars
         return NULL;
     }
 
-    cmdline_option_vector_add_result_t  push_status =   cmdline_option_parser_free_params_push(parser->string_storage, str);
+    cmdline_option_vector_add_result_t  push_status =   cmdline_option_parser_string_storage_push(parser->string_storage, str);
     if (cmdline_option_vector_add_result_success != push_status) {
         free(str);
         return NULL;
