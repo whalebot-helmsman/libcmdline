@@ -65,7 +65,7 @@ typedef struct cmdline_option_parser_iface_s {
                        , int         required );
 
     void (*add_raw_enum) ( void*                  self
-                         , const char* easy_format
+                         , const char*            easy_format
                          , const char*            desc
                          , cmdline_enum_mapper_t* mapper
                          , const char*            default_value
