@@ -17,8 +17,8 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/examp
     parser->add_sect(parser, "options start");
     parser->add_help_flag(parser, 'h');
     parser->add_flag(parser, "f,flag"  , "flag symbolizes something binary", &flag);
-    parser->add_int(parser,  "I"       , "something you can count"         , &i   , "0" , parser->NOT_REQUIRED);
-    parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL, parser->REQUIRED);
+    parser->add_int(parser,  "I"       , "something you can count"         , &i   , parser->format(parser, "%i", 2 * 5), parser->NOT_REQUIRED);
+    parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL,                                parser->REQUIRED);
 
 
     parser->add_sect(parser, "last option");
@@ -47,7 +47,7 @@ If there is some errors in command line parameters you will see help message
     option start:
         -h, --help, [flag]          show this message
         -f, --flag, [flag]          flag symbolizes something binary
-        -I                          something you can count [= 0]
+        -I                          something you can count [= 10]
         -s, --string, [required]    something looks like human word
     last option:
         -e, --enum                  something enumerated (zero, one, two, three) [= zero]
