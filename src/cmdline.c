@@ -1371,15 +1371,11 @@ unsigned int cmdline_option_key_size(cmdline_option_t* option)
 {
     unsigned int    size            =   0;
 
-    /*-K*/
-    if ('\0' != option->short_key) {
-        size    +=  2;
-    }
+    /*-K or space*/
+    size    +=  2;
 
-    /*', ' - beetwen them*/
-    if (('\0' != option->short_key) && (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key))) {
-        size    +=  2;
-    }
+    /*', ' - beetwen them or space*/
+    size    +=  2;
 
     /*--long-key*/
     if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
@@ -1404,10 +1400,14 @@ void cmdline_option_key_print( cmdline_option_t* option
     fprintf(stderr, "\t");
     if ('\0' != option->short_key) {
         fprintf(stderr, "-%c", option->short_key);
+    } else {
+        fprintf(stderr, "  ");
     }
 
     if (('\0' != option->short_key) && (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key))) {
         fprintf(stderr, ", ");
+    } else {
+        fprintf(stderr, "  ");
     }
 
     if (cmdline_bool_false == cmdline_buffer_is_empty(&option->long_key)) {
