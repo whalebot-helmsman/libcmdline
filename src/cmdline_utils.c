@@ -11,7 +11,7 @@ cmdline_cast_arg_result_e cmdline_cast_enum_arg( const char* cast_from
     int                     iter    =   0;
 
     while ((0 == is_find) && (mapper->cells_size > iter)) {
-        cmdline_enum_mapper_cell_t* current_cell    =   &mapper->cells_start[iter];
+        const cmdline_enum_mapper_cell_t*   current_cell    =   &mapper->cells_start[iter];
         if (0 == strcmp(cast_from, current_cell->from)) {
             is_find =   1;
             continue;
@@ -23,7 +23,7 @@ cmdline_cast_arg_result_e cmdline_cast_enum_arg( const char* cast_from
         return cmdline_cast_arg_failure;
     }
 
-    cmdline_enum_mapper_cell_t* find_cell   =   &mapper->cells_start[iter];
+    const cmdline_enum_mapper_cell_t*   find_cell   =   &mapper->cells_start[iter];
     *mapper->cast_to    =   find_cell->to;
 
     return cmdline_cast_arg_success;

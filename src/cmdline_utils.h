@@ -57,9 +57,9 @@ typedef struct cmdline_enum_mapper_cell_s {
 } cmdline_enum_mapper_cell_t;
 
 typedef struct cmdline_enum_mapper_s {
-    cmdline_enum_mapper_cell_t* cells_start;
-    int                         cells_size;
-    int*                        cast_to;
+    const cmdline_enum_mapper_cell_t*   cells_start;
+    int                                 cells_size;
+    int*                                cast_to;
 } cmdline_enum_mapper_t;
 
 #define CMDLINE_ENUM_MAPPER(m, t, v) \
