@@ -41,7 +41,7 @@ int main(int argc, char** argv)
                         , "enum,e"
                         , parser->format(parser, "something enumerated (%s, %s, %s, %s)", CMDLINE_ENUM_ENUMERATOR4(cells))
                         , &mapper
-                        , "zero"
+                        , CMDLINE_ENUM_DEFAULT(cells, 1)
                         , parser->NOT_REQUIRED);
 
     parser->full_parse(parser, argc, argv);

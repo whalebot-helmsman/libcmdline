@@ -95,6 +95,9 @@ typedef struct cmdline_enum_mapper_s {
 #define CMDLINE_ENUM_ENUMERATOR10(t) \
     CMDLINE_ENUM_ENUMERATOR9(t), t[9].from
 
+#define CMDLINE_ENUM_DEFAULT(m, idx) \
+    m[idx].from
+
 void cmdline_enum( cmdline_option_parser_t* parser
                  , char                     short_key
                  , const char*              long_key

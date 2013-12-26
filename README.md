@@ -31,7 +31,7 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/examp
                         , "enum,e"
                         , parser->format(parser, "something enumerated (%s, %s, %s, %s)", CMDLINE_ENUM_ENUMERATOR4(cells))
                         , &mapper
-                        , "zero"
+                        , CMDLINE_ENUM_DEFAULT(cells, 1)
                         , parser->NOT_REQUIRED);
 
 
@@ -50,7 +50,7 @@ If there is some errors in command line parameters you will see help message
         -I                          something you can count [= 10]
         -s, --string, [required]    something looks like human word
     last option:
-        -e, --enum                  something enumerated (zero, one, two, three) [= zero]
+        -e, --enum                  something enumerated (zero, one, two, three) [= one]
     free params: why you need free params
 
 Install
