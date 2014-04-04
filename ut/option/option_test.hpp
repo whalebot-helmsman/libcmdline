@@ -232,3 +232,49 @@ TEST(OptionsTest, you_cannot_create_option_with_mixed_key_use_easy_format_wth_eq
     EXPECT_EQ(not_created, create_try);
 }
 
+TEST(OptionsTest, you_can_convert_str_wo_postfix_to_memory)
+{
+    long int                    memory  =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_memory_arg("10", &memory);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(10, memory);
+}
+
+TEST(OptionsTest, you_cannot_convert_str_wth_wrong_postfix_to_memory)
+{
+    long int                    memory  =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_memory_arg("10Hb", &memory);
+    EXPECT_EQ(cmdline_cast_arg_failure, result);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_gb_postfix_to_memory)
+{
+    long int                    memory  =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_memory_arg("1Gb", &memory);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(1024 * 1024 * 1024, memory);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_mb_postfix_to_memory)
+{
+    long int                    memory  =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_memory_arg("10Mb", &memory);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(10 * 1024 * 1024, memory);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_kb_postfix_to_memory)
+{
+    long int                    memory  =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_memory_arg("3Kb", &memory);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(3072, memory);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_b_postfix_to_memory)
+{
+    long int                    memory  =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_memory_arg("46b", &memory);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(46, memory);
+}

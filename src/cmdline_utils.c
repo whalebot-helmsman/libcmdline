@@ -244,6 +244,24 @@ void cmdline_enum( cmdline_option_parser_t* parser
                , required );
 }
 
+void cmdline_memory( cmdline_option_parser_t* parser
+                   , char                     short_key
+                   , const char*              long_key
+                   , const char*              desc
+                   , long int*                value
+                   , const char*              default_value
+                   , int                      required )
+{
+    cmdline_opt( parser
+               , short_key
+               , long_key
+               , desc
+               , value
+               , default_value
+               , cmdline_cast_memory_arg
+               , required );
+}
+
 void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
 {
     cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
@@ -265,5 +283,51 @@ void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
 cmdline_cast_arg_result_e dumb_caster( PGM_GNUC_UNUSED const char* cast_from
                                      , PGM_GNUC_UNUSED void* cast_to)
 {
+    return cmdline_cast_arg_success;
+}
+
+cmdline_cast_arg_result_e cmdline_cast_memory_arg( const char* cast_from
+                                                 , void*       cast_to )
+{
+    long int*   value       =   (long int*)cast_to;
+    char*       stop_symbol =   NULL;
+    long int    memorize    =   strtol(cast_from, &stop_symbol, 10);
+
+    typedef struct memory_size_mapper_s {
+        const char* postfix;
+        long int    multiplier;
+    } memory_size_mapper_t;
+
+    static const memory_size_mapper_t   mapper[]    =   { { "b",  1                  }
+                                                        , { "Kb", 1024               }
+                                                        , { "Mb", 1024 * 1024        }
+                                                        , { "Gb", 1024 * 1024 * 1024 } };
+    static const long int               mapper_size =   sizeof(mapper) / sizeof(mapper[0]);
+
+    const memory_size_mapper_t* current =   mapper;
+
+    if ('\0' != *stop_symbol) {
+        const memory_size_mapper_t* found   =   NULL;
+        long int                    idx     =   0;
+
+        while ((NULL == found) && (idx < mapper_size)) {
+            const memory_size_mapper_t* candidate   =   mapper + idx;
+
+            if (0 == strcmp(candidate->postfix, stop_symbol)) {
+                found   =   candidate;
+            } else {
+                idx     +=  1;
+            }
+        }
+
+        if (NULL == found) {
+            return cmdline_cast_arg_failure;
+        }
+
+        current =   found;
+    }
+
+    *value  =   memorize * current->multiplier;
+
     return cmdline_cast_arg_success;
 }
