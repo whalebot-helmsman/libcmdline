@@ -232,6 +232,23 @@ void cmdline_option_parser_iface_add_raw_enum( void*                  self
                        , required );
 }
 
+void cmdline_option_parser_iface_add_memory( void*          self
+                                           , const char*    easy_format
+                                           , const char*    desc
+                                           , long int*      mapper
+                                           , const char*    default_value
+                                           , int            required )
+{
+    cmdline_option_parser_iface_t*  self_typed  =   (cmdline_option_parser_iface_t*)self;
+    self_typed->add_opt( self
+                       , easy_format
+                       , desc
+                       , mapper
+                       , default_value
+                       , cmdline_cast_memory_arg
+                       , required );
+}
+
 cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
 {
     cmdline_option_parser_iface_t*  iface  =   malloc(sizeof(cmdline_option_parser_iface_t));
@@ -264,6 +281,7 @@ cmdline_option_parser_iface_t*  cmdline_option_parser_iface_construct()
     iface->add_double                   =   cmdline_option_parser_iface_add_double;
     iface->add_raw_enum                 =   cmdline_option_parser_iface_add_raw_enum;
     iface->format                       =   cmdline_option_parser_iface_format;
+    iface->add_memory                   =   cmdline_option_parser_iface_add_memory;
 
     iface->REQUIRED     =   cmdline_option_required;
     iface->NOT_REQUIRED =   cmdline_option_not_required;

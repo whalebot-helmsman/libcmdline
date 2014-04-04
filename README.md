@@ -20,6 +20,8 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/examp
     parser->add_int(parser,  "I"       , "something you can count"         , &i   , parser->format(parser, "%i", 2 * 5), parser->NOT_REQUIRED);
     parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL,                                parser->REQUIRED);
 
+    parser->add_memory(parser,  "memory,m", "some computer size - Gb, Mb, Kb, b or no postfix supported" , &memory , "10", parser->NOT_REQUIRED);
+
 
     parser->add_sect(parser, "last option");
     cmdline_enum_mapper_cell_t  cells[] =   { {"zero",  zero }
@@ -49,6 +51,7 @@ If there is some errors in command line parameters you will see help message
         -f, --flag, [flag]          flag symbolizes something binary
         -I                          something you can count [= 10]
         -s, --string, [required]    something looks like human word
+        -m, --memory                some computer size - Gb, Mb, Kb, b or no postfix supported [= 10]
     last option:
         -e, --enum                  something enumerated (zero, one, two, three) [= one]
     free params: why you need free params

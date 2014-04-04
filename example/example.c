@@ -9,6 +9,7 @@ int main(int argc, char** argv)
     long int    i;
     const char* str;
     int         enumerated;
+    long int    memory;
 
     typedef enum something_enumerated_s {
         zero = 0,
@@ -30,6 +31,8 @@ int main(int argc, char** argv)
     parser->add_int(parser,  "I"       , "something you can count"         , &i   , parser->format(parser, "%i", 2 * 5), parser->NOT_REQUIRED);
     parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL,                                parser->REQUIRED);
 
+    parser->add_memory(parser,  "memory,m", "some computer size - Gb, Mb, Kb, b or no postfix supported" , &memory , "10", parser->NOT_REQUIRED);
+
 
     parser->add_sect(parser, "last option");
     cmdline_enum_mapper_cell_t  cells[] =   { {"zero",  zero }
@@ -46,10 +49,11 @@ int main(int argc, char** argv)
 
     parser->full_parse(parser, argc, argv);
 
-    fprintf(stdout, "flag              =   %d\n", flag);
+    fprintf(stdout, "flag              =   %d\n",  flag);
     fprintf(stdout, "i                 =   %ld\n", i);
-    fprintf(stdout, "str               =   %s\n", str);
-    fprintf(stdout, "enumerated        =   %d\n", enumerated);
+    fprintf(stdout, "str               =   %s\n",  str);
+    fprintf(stdout, "enumerated        =   %d\n",  enumerated);
+    fprintf(stdout, "memory            =   %ld\n", memory);
     cmdline_option_parser_free_params_iterator_t    iter    =   parser->free_params_begin(parser);
     cmdline_option_parser_free_params_iterator_t    end     =   parser->free_params_end(parser);
     int                                             number  =   0;
