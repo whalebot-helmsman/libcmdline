@@ -12,12 +12,12 @@ int main(int argc, char** argv)
     long int    memory;
     long int    seconds;
 
-    typedef enum something_enumerated_s {
+    enum something_enumerated_s {
         zero = 0,
         one,
         two,
         three
-    } something_enumerated_e;
+    };
 
     cmdline_option_parser_iface_t*  parser  =   cmdline_option_parser_iface_construct();
     parser->set_program_description(parser, "program to demonstrate abilities of libcmdline library");
