@@ -59,6 +59,14 @@ void cmdline_memory( cmdline_option_parser_t* parser
                    , const char*              default_value
                    , int                      required );
 
+void cmdline_seconds( cmdline_option_parser_t* parser
+                    , char                     short_key
+                    , const char*              long_key
+                    , const char*              desc
+                    , long int*                value
+                    , const char*              default_value
+                    , int                      required );
+
 typedef struct cmdline_enum_mapper_cell_s {
     const char* from;
     int         to;
@@ -125,6 +133,9 @@ cmdline_cast_arg_result_e cmdline_cast_enum_arg( const char* cast_from
 
 cmdline_cast_arg_result_e cmdline_cast_memory_arg( const char* cast_from
                                                  , void*       cast_to );
+
+cmdline_cast_arg_result_e cmdline_cast_seconds_arg( const char* cast_from
+                                                  , void*       cast_to );
 #define NOT_REQ cmdline_option_not_required
 #define REQ cmdline_option_required
 
