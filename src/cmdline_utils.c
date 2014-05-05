@@ -286,33 +286,33 @@ cmdline_cast_arg_result_e dumb_caster( PGM_GNUC_UNUSED const char* cast_from
     return cmdline_cast_arg_success;
 }
 
-typedef struct memory_size_mapper_s {
+typedef struct table_mapper_s {
     const char* postfix;
     long int    multiplier;
-} memory_size_mapper_t;
+} table_mapper_t;
 
-cmdline_cast_arg_result_e cmdline_get_multiplier_from_table( const char*                 postfix
-                                                           , const memory_size_mapper_t* mapper
-                                                           , const long int              mapper_size
-                                                           , const long int              default_idx
-                                                           , long int*                   result_multiplier )
+cmdline_cast_arg_result_e cmdline_get_multiplier_from_table( const char*           postfix
+                                                           , const table_mapper_t* mapper
+                                                           , const long int        mapper_size
+                                                           , const long int        default_idx
+                                                           , long int*             result_multiplier )
 {
     if (default_idx >= mapper_size) {
         return cmdline_cast_arg_failure;
     }
 
     if ('\0' == *postfix) {
-        const memory_size_mapper_t* default_mapper  =   mapper + default_idx;
+        const table_mapper_t* default_mapper  =   mapper + default_idx;
         *result_multiplier  =   default_mapper->multiplier;
         return cmdline_cast_arg_success;
     }
 
 
-    const memory_size_mapper_t* found   =   NULL;
+    const table_mapper_t* found   =   NULL;
     long int                    idx     =   0;
 
     while ((NULL == found) && (idx < mapper_size)) {
-        const memory_size_mapper_t* candidate   =   mapper + idx;
+        const table_mapper_t* candidate   =   mapper + idx;
 
         if (0 == strcmp(candidate->postfix, postfix)) {
             found   =   candidate;
@@ -336,11 +336,11 @@ cmdline_cast_arg_result_e cmdline_cast_memory_arg( const char* cast_from
     char*       stop_symbol =   NULL;
     long int    memorize    =   strtol(cast_from, &stop_symbol, 10);
 
-    static const memory_size_mapper_t   mapper[]    =   { { "b",  1                  }
-                                                        , { "Kb", 1024               }
-                                                        , { "Mb", 1024 * 1024        }
-                                                        , { "Gb", 1024 * 1024 * 1024 } };
-    static const long int               mapper_size =   sizeof(mapper) / sizeof(mapper[0]);
+    static const table_mapper_t mapper[]    =   { { "b",  1                  }
+                                                , { "Kb", 1024               }
+                                                , { "Mb", 1024 * 1024        }
+                                                , { "Gb", 1024 * 1024 * 1024 } };
+    static const long int       mapper_size =   sizeof(mapper) / sizeof(mapper[0]);
 
     long int                    multiplier      =   0;
     cmdline_cast_arg_result_e   postfix_result  =   cmdline_get_multiplier_from_table( stop_symbol
