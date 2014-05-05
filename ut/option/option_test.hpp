@@ -278,3 +278,50 @@ TEST(OptionsTest, you_can_convert_str_wth_b_postfix_to_memory)
     EXPECT_EQ(cmdline_cast_arg_success, result);
     EXPECT_EQ(46, memory);
 }
+
+TEST(OptionsTest, you_can_convert_str_wo_postfix_to_seconds)
+{
+    long int                    seconds =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_seconds_arg("10", &seconds);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(10, seconds);
+}
+
+TEST(OptionsTest, you_cannot_convert_str_wth_wrong_postfix_to_seconds)
+{
+    long int                    seconds =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_seconds_arg("10Hb", &seconds);
+    EXPECT_EQ(cmdline_cast_arg_failure, result);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_min_postfix_to_seconds)
+{
+    long int                    seconds =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_seconds_arg("2min", &seconds);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(2 * 60, seconds);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_hour_postfix_to_seconds)
+{
+    long int                    seconds =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_seconds_arg("10hour", &seconds);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(10 * 60 * 60, seconds);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_day_postfix_to_seconds)
+{
+    long int                    seconds =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_seconds_arg("3day", &seconds);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(3 * 60 * 60 * 24, seconds);
+}
+
+TEST(OptionsTest, you_can_convert_str_wth_sec_postfix_to_seconds)
+{
+    long int                    seconds =   0;
+    cmdline_cast_arg_result_e   result  =   cmdline_cast_seconds_arg("46sec", &seconds);
+    EXPECT_EQ(cmdline_cast_arg_success, result);
+    EXPECT_EQ(46, seconds);
+}

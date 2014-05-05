@@ -20,7 +20,8 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/examp
     parser->add_int(parser,  "I"       , "something you can count"         , &i   , parser->format(parser, "%i", 2 * 5), parser->NOT_REQUIRED);
     parser->add_str(parser,  "string,s", "something looks like human word" , &str , NULL,                                parser->REQUIRED);
 
-    parser->add_memory(parser,  "memory,m", "some computer size - Gb, Mb, Kb, b or no postfix supported" , &memory , "10", parser->NOT_REQUIRED);
+    parser->add_memory(parser,  "memory,m",  "some computer size - Gb, Mb, Kb, b or no postfix supported" ,       &memory ,  "10", parser->NOT_REQUIRED);
+    parser->add_seconds(parser, "seconds,S", "some time duration - sec, min, hour, day or no postfix supported" , &seconds , "10", parser->NOT_REQUIRED);
 
 
     parser->add_sect(parser, "last option");
@@ -52,6 +53,7 @@ If there is some errors in command line parameters you will see help message
         -I                          something you can count [= 10]
         -s, --string, [required]    something looks like human word
         -m, --memory                some computer size - Gb, Mb, Kb, b or no postfix supported [= 10]
+        -S, --seconds               some time duration - sec, min, hour, day or no postfix supported [= 10]
     last option:
         -e, --enum                  something enumerated (zero, one, two, three) [= one]
     free params: why you need free params

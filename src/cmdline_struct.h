@@ -78,6 +78,13 @@ typedef struct cmdline_option_parser_iface_s {
                        , const char*    default_value
                        , int            required );
 
+    void (*add_seconds) ( void*          self
+                        , const char*    easy_format
+                        , const char*    desc
+                        , long int*      mapper
+                        , const char*    default_value
+                        , int            required );
+
     cmdline_is_option_required_e    REQUIRED;
     cmdline_is_option_required_e    NOT_REQUIRED;
     cmdline_is_option_required_e    FORBIDDEN;

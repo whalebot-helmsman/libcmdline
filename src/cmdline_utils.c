@@ -262,6 +262,24 @@ void cmdline_memory( cmdline_option_parser_t* parser
                , required );
 }
 
+void cmdline_seconds( cmdline_option_parser_t* parser
+                    , char                     short_key
+                    , const char*              long_key
+                    , const char*              desc
+                    , long int*                value
+                    , const char*              default_value
+                    , int                      required )
+{
+    cmdline_opt( parser
+               , short_key
+               , long_key
+               , desc
+               , value
+               , default_value
+               , cmdline_cast_seconds_arg
+               , required );
+}
+
 void cmdline_parse(cmdline_option_parser_t* parser, int argc, char** argv)
 {
     cmdline_option_parser_report_t result   =   cmdline_option_parser_parse( parser
@@ -356,4 +374,34 @@ cmdline_cast_arg_result_e cmdline_cast_memory_arg( const char* cast_from
     *value  =   memorize * multiplier;
 
     return cmdline_cast_arg_success;
+}
+
+cmdline_cast_arg_result_e cmdline_cast_seconds_arg( const char* cast_from
+                                                  , void*       cast_to )
+{
+    long int*   value       =   (long int*)cast_to;
+    char*       stop_symbol =   NULL;
+    long int    memorize    =   strtol(cast_from, &stop_symbol, 10);
+
+    static const table_mapper_t mapper[]    =   { { "sec",  1            }
+                                                , { "min",  60           }
+                                                , { "hour", 60 * 60      }
+                                                , { "day",  60 * 60 * 24 } };
+    static const long int       mapper_size =   sizeof(mapper) / sizeof(mapper[0]);
+
+    long int                    multiplier      =   0;
+    cmdline_cast_arg_result_e   postfix_result  =   cmdline_get_multiplier_from_table( stop_symbol
+                                                                                     , mapper
+                                                                                     , mapper_size
+                                                                                     , 0
+                                                                                     , &multiplier );
+
+    if (cmdline_cast_arg_success != postfix_result) {
+        return cmdline_cast_arg_failure;
+    }
+
+    *value  =   memorize * multiplier;
+
+    return cmdline_cast_arg_success;
+    return cmdline_cast_arg_failure;
 }
