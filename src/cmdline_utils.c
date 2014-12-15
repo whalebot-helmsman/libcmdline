@@ -403,5 +403,4 @@ cmdline_cast_arg_result_e cmdline_cast_seconds_arg( const char* cast_from
     *value  =   memorize * multiplier;
 
     return cmdline_cast_arg_success;
-    return cmdline_cast_arg_failure;
 }
