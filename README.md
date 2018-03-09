@@ -6,7 +6,8 @@ Usage
 =====
 See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/example/example.c?at=default)
 
-    :::c
+
+```c
     cmdline_option_parser_iface_t*  parser  =   cmdline_option_parser_iface_construct();
     parser->set_program_description(parser, "program to demonstrate abilities of libcmdline library");
     parser->set_free_params_description(parser, "why you need free params");
@@ -39,10 +40,11 @@ See [example.c](https://bitbucket.org/whalebot_helmsman/libcmdline/src/tip/examp
 
 
     parser->full_parse(parser, argc, argv);
+```
 
 If there is some errors in command line parameters you will see help message
 
-    :::bash
+```bash
     option required: "string,s"
     Description: program to demonstrate abilities of libcmdline library
     Example    : bin/example_c -e two -s smth asas
@@ -57,18 +59,20 @@ If there is some errors in command line parameters you will see help message
     last option:
         -e, --enum                  something enumerated (zero, one, two, three) [= one]
     free params: why you need free params
+```
 
 Install
 ============
 Building in source root run next commands
 
-    :::bash
+```bash
     mkdir build
     cd build
     cmake -DCMAKE_BUILD_TYPE=Release ../
     make
     #you need to be root to install library in your system
     su -c 'make install'
+```
 
 
 Requirements
