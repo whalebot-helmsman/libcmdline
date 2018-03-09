@@ -4,4 +4,4 @@ pipelines:
   default:
     - step:
         script:
-          - bash cl.drone.io.sh
+          - sh cl.drone.io.sh
