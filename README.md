@@ -75,7 +75,7 @@ Requirements
 ============
 This library is requirenments free, you only need c/c++ compiler, cmake and make
 
-Testing
+[![Build Status](https://travis-ci.org/whalebot-helmsman/libcmdline.svg?branch=master)](https://travis-ci.org/whalebot-helmsman/libcmdline) Testing
 =======
 
 For testing you need [gtest](http://code.google.com/p/googletest/).
