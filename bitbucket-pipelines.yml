@@ -1,7 +1,0 @@
-image: coenvl/googletest
-
-pipelines:
-  default:
-    - step:
-        script:
-          - sh cl.drone.io.sh
