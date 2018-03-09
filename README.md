@@ -75,7 +75,7 @@ Requirements
 ============
 This library is requirenments free, you only need c/c++ compiler, cmake and make
 
-[![Build Status](https://drone.io/bitbucket.org/whalebot_helmsman/libcmdline/status.png)](https://drone.io/bitbucket.org/whalebot_helmsman/libcmdline/latest)Testing
+Testing
 =======
 
 For testing you need [gtest](http://code.google.com/p/googletest/).
