@@ -9,6 +9,7 @@ before_install:
     - sudo cp libgtest* /usr/lib
     - sudo mkdir /usr/include/gtest
     - sudo cp -r include/gtest/* /usr/include/gtest
+    - popd
 script:
     - cmake -DCMAKE_BUILD_TYPE=Release ./
     - make
