@@ -86,7 +86,8 @@ For testing you need [gtest](http://code.google.com/p/googletest/).
 
 After build you need to run
 
-    :::bash
+```bash
     make test
+```
 
 
